@@ -29,7 +29,6 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import RoomIcon from "@mui/icons-material/Room";
-
 // Map icons
 import houseIconPng from "./Assets/Mapicons/house.png";
 import apartmentIconPng from "./Assets/Mapicons/apartment.png";
@@ -80,14 +79,14 @@ function Listings() {
 	});
 	
 	const[latitude,setLatitude] = useState(47.625650276247036)
-	const[longtitude,setLongtitude] = useState(-122.33418978466639)
+	const[longitude,setLongitude] = useState(-122.33418978466639)
 	function GoEast(){
 		setLatitude(47.62127181014346);
-		setLongtitude(-122.3335624482696);
+		setLongitude(-122.3335624482696);
 	}
 	function GoCenter(){
 		setLatitude(47.625650276247036);
-		setLongtitude(-122.33418978466639);
+		setLongitude(-122.33418978466639);
 	}
 	const ployOne = [
 		[47.62075143319851, -122.34927089823627],
@@ -95,8 +94,27 @@ function Listings() {
 		[47.62107160617573, -122.33189907379352],
 
 	]
+	// ----------------------latitude and longitude --------------//
 	const[allListings,setAllListings] = useState([]);
 	const[dataIsLoading,setDataIsLoading] = useState(true)
+	const initialState = {
+        mapInstance: null,
+    };
+	//-------------------------ReducerFunction-----------------//
+    function ReducerFunction(draft, action) {
+        switch (action.type) {
+            case 'getMap': draft.mapInstance = action.mapData;
+                break
+        }
+
+    }
+	const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
+	function TheMapComponent() {
+        const map = useMap();
+        dispatch({type: "getMap", mapData: map});
+        return null
+    }
+
 	
 	useEffect(()=>{
 		const source = Axios.CancelToken.source();
@@ -135,11 +153,11 @@ function Listings() {
 					<Card key = {listing.id} className ={classes.cardStyle}>
 				<CardHeader
 
-				/* action={
-				<IconButton aria-label="settings">
-					<MoreVertIcon />
+				action={
+				<IconButton aria-label="settings" onClick = {()=>state.mapInstance.flyTo([listing.latitude,listing.longitude],18)}>
+					<RoomIcon />
 				</IconButton>
-				} */
+				}
 				title={listing.title}
 				/>
 				<CardMedia
@@ -169,15 +187,12 @@ function Listings() {
 			
 			}
 				
-				{/*  <CardActions disableSpacing>
+				 <CardActions disableSpacing>
 				<IconButton aria-label="add to favorites">
-				<FavoriteIcon />
-				</IconButton>
-				<IconButton aria-label="share">
-				<ShareIcon />
+				{listing.seller_username}
 				</IconButton>
 
-				</CardActions> */}
+				</CardActions>
 
         	</Card>
 				)
@@ -192,11 +207,12 @@ function Listings() {
 		attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 		/>
-		<Polyline positions = {ployOne} color = "green"/>
+		<TheMapComponent />
+		{/* <Polyline positions = {ployOne} color = "green"/>
 		<Polygon positions = {polygonOne} fillOpacity = {0.9}
 		opacity = {0}
 		
-		/>
+		/> */}
 		
 
 		{allListings.map((listing) => {

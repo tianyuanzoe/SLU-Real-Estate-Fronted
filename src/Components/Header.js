@@ -74,6 +74,12 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  function HandleProfile(){
+    setAnchorEl(null);
+    navigate('/profile')
+  };
+
+
   async function handleLogout(){
     setAnchorEl(null);
     const confirmLogout = window.confirm('Are you sure you want to leave?')
@@ -121,7 +127,7 @@ function Header() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem className = {classes.profileBtn} onClick={handleClose}>Profile</MenuItem>
+        <MenuItem className = {classes.profileBtn} onClick={HandleProfile}>Profile</MenuItem>
         <MenuItem className = {classes.logoutBtn} onClick={handleLogout}>Logout</MenuItem>
       </Menu>
           

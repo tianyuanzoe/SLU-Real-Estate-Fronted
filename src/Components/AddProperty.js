@@ -197,10 +197,14 @@ function AddProperty() {
         mapInstance: null,
         markerPosition: {
             lat: "47.625650276247036",
-            lng: "-122.33418978466639"
+            lng: "-122.33418978466639",
         },
         uploadedPictures: [],
-        sendRequest: 0
+        sendRequest: 0,
+        userProfile:{
+            agencyName:'',
+            phoneNumber:'',
+        }
     };
     function ReducerFunction(draft, action) {
         switch (action.type) {
@@ -248,15 +252,20 @@ function AddProperty() {
                 break
             case 'getMap': draft.mapInstance = action.mapData;
                 break
-            case 'changeMarkerPosition': draft.markerPosition.lat = action.changeLatitude
-                draft.markerPosition.lng = action.changeLongitude
-                draft.latitudeValue = ""
-                draft.longitudeValue = ""
+            case 'changeMarkerPosition':
+                 draft.markerPosition.lat = action.changeLatitude;
+                draft.markerPosition.lng = action.changeLongitude;
+                draft.latitudeValue = "";
+                draft.longitudeValue = "";
                 break
             case 'catchUploadedPictures': draft.uploadedPictures = action.picturesChosen
                 break
             case 'changeSendRequest': draft.sendRequest = draft.sendRequest + 1;
                 break
+            case 'catchUserProfileInfo':
+                draft.userProfile.agencyName = action.profileObject.agency_name;
+                draft.userProfile.phoneNumber = action.profileObject.phone_number;
+                break;  
 
 
         }
@@ -305,7 +314,7 @@ function AddProperty() {
             dispatch({type: "changeMarkerPosition", changeLatitude: 47.6773660077177, changeLongitude: -122.12026704269996})
         }
 
-    })
+    },[state.boroughValue])
     // --------------------------boroughdisplay function-----------------//
     function BoroughDisplay() {
         if (state.boroughValue === 'South Lake Union') {
@@ -334,6 +343,7 @@ function AddProperty() {
     const eventHandlers = useMemo(() => ({
         dragend() {
             const marker = markerRef.current;
+			//console.log(marker.getLatLng());
             dispatch({type: 'catchLatitudeChange', latitudeChosen: marker.getLatLng().lat})
             dispatch({type: 'catchLongitudeChange', longitudeChosen: marker.getLatLng().lng})
 
@@ -375,6 +385,23 @@ function AddProperty() {
 
     }, [state.uploadedPictures[4]])
 
+    useEffect(()=>{
+		console.log(state.latitudeValue,state.longitudeValue);
+	},[state.latitudeValue,state.longitudeValue])
+
+    //-----------------request to get a profile info-----------//
+    useEffect(()=>{
+        async function GetProfileInfo(){
+            try{
+                const response = await Axios.get(`http://localhost:8000/api/profiles/${GlobalState.userId}/`);
+                console.log(response.data)
+                dispatch({type:'catchUserProfileInfo',profileObject:response.data,})
+            }catch(e){
+                console.log(e.response)
+            }
+        }
+        GetProfileInfo()
+    },[])
 	//---------------------------Form Submit-----------------//
 
     function FormSubmit(e) {
@@ -382,6 +409,7 @@ function AddProperty() {
         console.log("the form has been submitted");
         dispatch({type:'changeSendRequest'});
     }
+	
 	//------------------------send request-----------------//
 	useEffect(()=>{
 		if(state.sendRequest){
@@ -411,7 +439,8 @@ function AddProperty() {
 				formData.append('seller',GlobalState.userId);
 				try{
 					const response = await Axios.post("http://localhost:8000/api/listings/create/",formData);
-					console.log(response)
+					console.log(response.data)
+                    navigate('/listings')
 				}catch(e){
 					console.log(e.response);
 				}
@@ -419,6 +448,7 @@ function AddProperty() {
 			AddProperty()
 		}
 	},[state.sendRequest]);
+    //----------------------------Price Display-----------------//
     function PriceDisplay() {
         if (state.rentalFrequencyValue === 'Day') {
             return 'Price Per Day*'
@@ -430,6 +460,26 @@ function AddProperty() {
             return 'Price Per Month*'
         } else {
             return "Price*"
+        }
+    }
+    function submitButtonDisplay(){
+        if(!GlobalState.userIsLogged){
+            return (
+                <Button variant="outlined" fullWidth 
+                onClick={()=>navigate("/login")}
+                className={
+                    classes.registerBtn
+            }>
+                SIGN IN TO ADD A PROPERTY</Button>
+            )
+        }else{
+            return(
+            <Button variant="contained" fullWidth type="submit"
+            className={
+                classes.registerBtn
+        }>
+            SUBMIT</Button>
+            )
         }
     }
 
@@ -837,11 +887,7 @@ state.parkingValue}
                         marginRight: "auto"
                     }
             }>
-                <Button variant="contained" fullWidth type="submit"
-                    className={
-                        classes.registerBtn
-                }>
-                    SUBMIT</Button>
+               {submitButtonDisplay()}
             </Grid>
         </form>
 

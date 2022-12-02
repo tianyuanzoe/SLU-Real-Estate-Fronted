@@ -9,12 +9,14 @@ import Header from './Components/Header';
 import Testing from './Components/Testing';
 import Register from './Components/Register';
 import AddProperty from './Components/AddProperty';
+import Profile from './Components/Profile';
 // MUI COMPONENTS
 import { StyledEngineProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 //contexts
 import DispatchContext from './Contexts/DispatchContext';
 import StateContext from './Contexts/StateContext';
+import { PriceChange } from '@mui/icons-material';
 
 
 function App() {
@@ -72,6 +74,7 @@ function App() {
   <Route path = '/testing' element = {<Testing></Testing>}/>
   <Route path = '/register' element = {<Register></Register>}/>
   <Route path = '/addproperty' element = {<AddProperty></AddProperty>}/>
+  <Route path = '/profile' element = {<Profile></Profile>}/>
   </Routes>
   
 
