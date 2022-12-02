@@ -180,7 +180,7 @@ function Profile() {
 			
 			<Grid item container style = {{marginTop:"1rem"}}>
 			<TextField id="phoneNumber" label="Contact Infomation*" variant="outlined" fullWidth 
-			value = {state.phoneNumber}
+			value = {state.phoneNumberValue}
 			onChange = {(e)=>dispatch({type:"catchPhoneNumberChange",phoneNumberChosen:e.target.value})}/>
 			</Grid>
 {/*----------------------bio--------------------------- */}
@@ -188,7 +188,7 @@ function Profile() {
 			<TextField id="bio" label="Bio" variant="outlined" fullWidth 
 			multiline
 			rows = {6}
-			value = {state.bio}
+			value = {state.bioValue}
 			onChange = {(e)=>dispatch({type:"catchBioChange",bioChosen:e.target.value})}/>
 			</Grid>
 
