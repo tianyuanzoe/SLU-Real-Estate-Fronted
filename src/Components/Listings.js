@@ -77,6 +77,7 @@ function Listings() {
 		iconUrl:officeIconPng,
 		iconSize:[40,40],
 	});
+	const navigate = useNavigate();
 	
 	const[latitude,setLatitude] = useState(47.625650276247036)
 	const[longitude,setLongitude] = useState(-122.33418978466639)
@@ -165,6 +166,7 @@ function Listings() {
 				component="img"
 				image={listing.picture1}
 				alt={listing.title}
+				onClick = {()=>navigate(`/listings/${listing.id}`)}
 				/>
 				<CardContent>
 				<Typography variant="body2" >
@@ -189,7 +191,7 @@ function Listings() {
 				
 				 <CardActions disableSpacing>
 				<IconButton aria-label="add to favorites">
-				{listing.seller_username}
+				{listing.seller_agency_name}
 				</IconButton>
 
 				</CardActions>
@@ -235,9 +237,15 @@ function Listings() {
 			position = {[listing.latitude,listing.longitude]}>
 			<Popup>
 		<Typography variant="h5">{listing.title}</Typography>
-		<img src = {listing.picture1} style = {{height:"14rem",width:"18rem"}}/>
+		<img src = {listing.picture1} style = {{height:"14rem",width:"18rem",cursor:"pointer"}}
+		onClick = {()=>navigate(`/listings/${listing.id}`)}
+		
+		/>
 		<Typography variant="body1">{listing.description.substring(0,150)}...</Typography>
-		<Button variant = "contained" fullWidth>Details</Button>
+		<Button variant = "contained" fullWidth
+		onClick = {()=>navigate(`/listings/${listing.id}`)}
+		
+		>Details</Button>
 		</Popup>
 			</Marker>
 			

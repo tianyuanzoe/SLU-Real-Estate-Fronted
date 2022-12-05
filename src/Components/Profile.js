@@ -1,10 +1,18 @@
-
-import React, {useEffect, useState, useRef, useMemo,useContext} from "react";
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useMemo,
+    useContext
+} from "react";
 import {useNavigate} from "react-router-dom";
 import Axios from "axios";
 import {useImmerReducer} from "use-immer";
 
 import StateContext from "../Contexts/StateContext";
+
+//Assets
+import defaultProfilePicture from './Assets/defaultProfilePicture.jpg'
 
 // MUI
 import {
@@ -26,26 +34,27 @@ import {
 } from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {ClassNames} from "@emotion/react";
+import ProfileUpdate from "./ProfileUpdate";
 
 const useStyles = makeStyles({
-	formContainer: {
-		width: "50%",
-		marginLeft: "auto",
-		marginRight: "auto",
-		marginTop: "3rem",
-		border: "5px solid black",
-		padding: "3rem",
-	},
-	loginBtn: {
-		backgroundColor: "green",
-		color: "white",
-		fontSize: "1.1rem",
-		marginLeft: "1rem",
-		"&:hover": {
-			backgroundColor: "blue",
-		},
-	},
-	picturesBtn: {
+    formContainer: {
+        width: "50%",
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginTop: "3rem",
+        border: "5px solid black",
+        padding: "3rem"
+    },
+    loginBtn: {
+        backgroundColor: "green",
+        color: "white",
+        fontSize: "1.1rem",
+        marginLeft: "1rem",
+        "&:hover": {
+            backgroundColor: "blue"
+        }
+    },
+    picturesBtn: {
         backgroundColor: "light blue",
         color: "white",
         fontSize: "0.9rem",
@@ -54,186 +63,204 @@ const useStyles = makeStyles({
         "&:hover": {
             backgroundColor: "grey"
         }
-    },
+    }
 });
 
 
 function Profile() {
-	const classes = useStyles();
+    const classes = useStyles();
     const navigate = useNavigate();
-	const GlobalState = useContext(StateContext)
-	const initialState = {
-        userProfile:{
-            agencyName:'',
-            phoneNumber:'',
+    const GlobalState = useContext(StateContext)
+    const initialState = {
+        userProfile: {
+            agencyName: "",
+            phoneNumber: '',
+            profilePic: '',
+            bio: '',
+			sellerId:'',
+			sellerListings:[],
         },
-		agencyNameValue:'',
-		phoneNumberValue:'',
-		bioValue:'',
-		uploadedPicture:[],
-		profilePictureValue:'',
-		sendRequest:0
+		dataIsLoading:true,
+       
     };
-	const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
-	//-----------USE  effect to catch uploaded pictures
-	useEffect(()=>{
-		if(state.uploadedPicture[0]){
-			dispatch({type:'catchProfilePictureChange',profilePictureChosen:state.uploadedPicture[0]})
-		}
-	},[state.uploadedPicture[0]])
+    const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
 
     function ReducerFunction(draft, action) {
         switch (action.type) {
             case 'catchUserProfileInfo':
-                draft.userProfile.agencyName = action.profileObject.agency_name;
+				draft.userProfile.agencyName = action.profileObject.agency_name;
                 draft.userProfile.phoneNumber = action.profileObject.phone_number;
-                break;  
-			case 'catchAgencyNameChange':
-				draft.agencyNameValue = action.agencyNameChosen
-				break;	
-			case 'catchPhoneNumberChange':
-				draft.phoneNumberValue = action.phoneNumberChosen
-				break;
-			case 'catchBioChange':
-				draft.bioValue = action.bioChosen;
+                draft.userProfile.profilePic = action.profileObject.profile_picture;
+                draft.userProfile.bio = action.profileObject.bio;
+				draft.userProfile.sellerId = action.profileObject.seller;
+				draft.userProfile.sellerListings = action.profileObject.seller_listings; 
+                break;
+			case 'loadingDone':
+				draft.dataIsLoading = false	
 				break
-			case 'catchUploadedPicture':
-				draft.uploadedPicture = action.pictureChosen;
-				break
-			case "catchProfilePictureChange":
-				draft.profilePictureValue = action.profilePictureChosen	
-				break
-			case 'changeSendRequest':
-				draft.sendRequest = draft.sendRequest + 1
-				break	
 
+        }
     }
-}
 
-	//-----------------request to get a profile info-----------//
-    useEffect(()=>{
-        async function GetProfileInfo(){
-            try{
-                const response = await Axios.get(`http://localhost:8000/api/profiles/${GlobalState.userId}/`);
+    // -----------------request to get a profile info-----------//
+    useEffect(() => {
+        async function GetProfileInfo() {
+            try {
+                const response = await Axios.get(`http://localhost:8000/api/profiles/
+				${
+                    GlobalState.userId
+                }/`);
                 console.log(response.data)
-                dispatch({type:'catchUserProfileInfo',profileObject:response.data,})
-            }catch(e){
+                dispatch({type: 'catchUserProfileInfo', profileObject: response.data});
+				dispatch({type:'loadingDone'})
+            } catch (e) {
                 console.log(e.response)
             }
         }
         GetProfileInfo()
-    },[])
+    }, []);
 
-	//--------------------------send Request-------------//
-	useEffect(()=>{
-		if(state.sendRequest){
-			async function UpdateProfile(){
-				const formData = new FormData()
-				formData.append('agency_name',state.agencyNameValue);
-				formData.append('phone_number',state.phoneNumberValue);
-				formData.append('bio',state.bioValue);
-				formData.append('profile_picture',state.profilePictureValue);
-				formData.append('seller',state.userId);
-				try{
-					const response = await Axios.patch(`http://localhost:8000/api/profiles/${GlobalState.userId}/update/`,formData);
-					console.log(response.data)
-                    //navigate('/listings')
-				}catch(e){
-					console.log(e.response);
-				}
-			}
-			UpdateProfile()
+	//-------------------//------------------
+	function PropertiesDisplay() {
+		if (state.userProfile.sellerListings.length === 0) {
+			return (
+				<Button disabled size="small">
+					No Property
+				</Button>
+			);
+		} else if (state.userProfile.sellerListings.length === 1) {
+			return (
+				<Button
+					size="small"
+				onClick={() => navigate(`/agencies/${state.userProfile.sellerId}`)}
+				>
+					One Property listed
+				</Button>
+			);
+		} else {
+			return (
+				<Button
+					size="small"
+					onClick={() => navigate(`/agencies/${state.userProfile.sellerId}`)}
+				>
+					{state.userProfile.sellerListings.length} Properties
+				</Button>
+			);
 		}
-	},[state.sendRequest]);
-
-	//------------------------FormSubmit--------------//
-	function FormSubmit(e){
-		e.preventDefault()
-		dispatch({type:'changeSendRequest'})
 	}
-  return(
-	<>
-	<div>
-	<Typography variant = 'h5' style = {{textAlign:'center',marginTop:'1rem'}}>
-		Welcome <span style = {{color:'green',fontWeight:"bolder"}}>{GlobalState.userUsername}</span>, please submit this form below to update your profile
-	</Typography>
-	</div>
-	
 
-	<div className={classes.formContainer}>
-		<form onSubmit={FormSubmit}> 
-		<Grid item container justifyContent="center">
-			<Typography variant = 'h4'>
-				MY PROFILE
-			</Typography>
-			</Grid>
-
-			<Grid item container style = {{marginTop:"1rem"}}>
-			<TextField id="agencyName" label="Agency Name*" variant="outlined" fullWidth
-			value = {state.agencyNameValue}
-			onChange = {(e)=>dispatch({type:"catchAgencyNameChange",agencyNameChosen:e.target.value})}
-			
-			/>
-			
-			</Grid>
-
-			
-			<Grid item container style = {{marginTop:"1rem"}}>
-			<TextField id="phoneNumber" label="Contact Infomation*" variant="outlined" fullWidth 
-			value = {state.phoneNumberValue}
-			onChange = {(e)=>dispatch({type:"catchPhoneNumberChange",phoneNumberChosen:e.target.value})}/>
-			</Grid>
-{/*----------------------bio--------------------------- */}
-			<Grid item container style = {{marginTop:"1rem"}}>
-			<TextField id="bio" label="Bio" variant="outlined" fullWidth 
-			multiline
-			rows = {6}
-			value = {state.bioValue}
-			onChange = {(e)=>dispatch({type:"catchBioChange",bioChosen:e.target.value})}/>
-			</Grid>
-
-			{/* -------upload profile pictures---------------------------  */}
-			<Grid item container
-                xs={6}
-                style={
-                    {
-                        marginTop: "1rem",
-                        marginLeft: "auto",
-                        marginRight: "auto"
-                    }
-            }>
-                <Button variant="contained" fullWidth component="label"
-                    className={
-                        classes.picturesBtn
+    
+    // -----------------welcome display-------------//
+    function WelcomeDisplay() {
+        if (state.userProfile.agencyName === null || state.userProfile.agencyName === "" || state.userProfile.phoneNumber === null || state.userProfile.phoneNumber === "") {
+            return (
+                <Typography variant='h5'
+                    style={
+                        {
+                            textAlign: 'center',
+                            marginTop: '1rem'
+                        }
                 }>
-                    PROFILE PICTURE
-                    <input type="file" accept="image/png,image/gif,image/jpeg" hidden
-                        onChange={
-                            (e) => dispatch({type: 'catchUploadedPicture', pictureChosen: e.target.files})
-                        }/>
-                </Button>
-            </Grid>
-			{/* -----------------show profile picture---------- */}
-			<Grid item container>
-                <ul> {
-                    state.profilePictureValue ? <li> {
-                        state.profilePictureValue.name
-                    }</li> : ""
-                }
-                    </ul>
+                    Welcome{" "}
+                    <span style={
+                        {
+                            color: 'green',
+                            fontWeight: "bolder"
+                        }
+                    }>
+                        {
+                        GlobalState.userUsername
+                    }</span>
+                    {" "}, please submit this form below to update your profile
+                </Typography>
+            );
+        } else {
+            return (
+                <Grid container
+                    style={
+                        {
+                            width: '50%',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                            border: '5px solid black',
+							marginTop:'1rem',
+							padding:"5px",
+                        }
+                }>
+                    <Grid item>
+                        <img style={
+                                {
+                                    height: "10rem",
+                                    width: "15rem"
+                                }
+                            }
+                            src={
+                                state.userProfile.profilePic !== null?state.userProfile.profilePic : defaultProfilePicture
+                            }/>
+                    </Grid>
+                    <Grid item container direction='column' justifyContent='center'
+                        xs={6}>
+                        <Grid item>
+                            <Typography variant='h5'
+                                style={
+                                    {
+                                        textAlign: 'center',
+                                        marginTop: '1rem'
+                                    }
+                            }>
+                                Welcome{" "}
+                                <span style={
+                                    {
+                                        color: 'green',
+                                        fontWeight: "bolder"
+                                    }
+                                }>
+                                    {
+                                    GlobalState.userUsername
+                                }</span>
+                            </Typography>
+                        </Grid>
 
+                        <Grid item>
+                            <Typography variant='h5'
+                                style={
+                                    {
+                                        textAlign: 'center',
+                                        marginTop: '1rem'
+                                    }
+                            }>
+                                You have {PropertiesDisplay()} 
+                                <span style={
+                                    {
+                                        color: 'green',
+                                        fontWeight: "bolder"
+                                    }
+                                }>
+                                    </span>
+                            </Typography>
+                        </Grid>
 
-            </Grid>
-
-			{/* --------------UPDATE BUTTON---------------- */}
-			<Grid item container xs = {8} style = {{marginTop:"1rem",marginLeft:"auto",marginRight:"auto"}}>
-			<Button variant = "contained" fullWidth type = "submit" className = {classes.loginBtn}> UPDATE</Button>
+                    </Grid>
+                </Grid>
+            )
+        }
+    }
+	if(state.dataIsLoading === true){
+		return(
+			<Grid container justifyContent="center" alignItems="center" style = {{height:"100vh"}}>
+			<CircularProgress />
 			</Grid>
-		</form>
+		)
 		
-			</div>
-	</>
-  )
+	}
+    return (
+        <>
+            <div> {
+                WelcomeDisplay()
+            } </div>
+			<ProfileUpdate userProfile ={state.userProfile}/>
+        </>
+    )
 }
 
 export default Profile;

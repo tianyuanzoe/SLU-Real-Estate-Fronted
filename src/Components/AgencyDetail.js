@@ -73,7 +73,7 @@ function AgencyDetail() {
 		async function GetProfileInfo() {
 			try {
 				const response = await Axios.get(
-					`https://www.lbrepcourseapi.com/api/profiles/${params.id}/`
+					`http://localhost:8000/api/profiles/${params.id}/`
 				);
 
 				dispatch({
@@ -81,7 +81,9 @@ function AgencyDetail() {
 					profileObject: response.data,
 				});
 				dispatch({ type: "loadingDone" });
-			} catch (e) {}
+			} catch (e) {
+				console.log(e.response)
+			}
 		}
 		GetProfileInfo();
 	}, []);
@@ -172,7 +174,7 @@ function AgencyDetail() {
 									// 		: defaultProfilePicture
 									// }
 									image={
-										listing.picture1 ? listing.picture1 : defaultProfilePicture
+										`http://localhost:8000${listing.picture1}` ? `http://localhost:8000${listing.picture1}` : defaultProfilePicture
 									}
 									alt="Listing Picture"
 									onClick={() => navigate(`/listings/${listing.id}`)}

@@ -105,7 +105,7 @@ function Header() {
           </div>
           <div>
           <Button color="inherit" onClick={()=>navigate('/listings')}style={{marginRight:"2rem"}}><Typography variant='h6'>Listings</Typography>{" "}</Button>
-          <Button color="inherit"style={{marginRight:"2rem"}}><Typography variant='h6'>Agencies</Typography>{" "}</Button>
+          <Button color="inherit" onClick={()=>navigate('/agencies')}style={{marginRight:"2rem"}}><Typography variant='h6'>Agencies</Typography>{" "}</Button>
           </div>
           <div className= {classes.rightNav}>
           <Button onClick={()=>navigate('/addproperty')} className={classes.propertyBtn}>Add Properity</Button>

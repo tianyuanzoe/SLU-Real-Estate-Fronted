@@ -62,7 +62,7 @@ function Agencies() {
 		async function GetAgencies() {
 			try {
 				const response = await Axios.get(
-					`https://www.lbrepcourseapi.com/api/profiles/`
+					`http://localhost:8000/api/profiles/`
 				);
 
 				dispatch({
@@ -96,6 +96,7 @@ function Agencies() {
 			style={{ padding: "10px" }}
 		>
 			{state.agenciesList.map((agency) => {
+				// ------------Property Display------------//
 				function PropertiesDisplay() {
 					if (agency.seller_listings.length === 0) {
 						return (

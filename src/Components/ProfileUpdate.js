@@ -56,6 +56,7 @@ function ProfileUpdate(props) {
 	const classes = useStyles();
 	const navigate = useNavigate();
 	const GlobalState = useContext(StateContext);
+	console.log(props.userProfile)
 
 	const initialState = {
 		agencyNameValue: props.userProfile.agencyName,
@@ -144,13 +145,14 @@ function ProfileUpdate(props) {
 
 				try {
 					const response = await Axios.patch(
-						`https://www.lbrepcourseapi.com/api/profiles/${GlobalState.userId}/update/`,
+						`http://localhost:8000/api/profiles/${GlobalState.userId}/update/`,
 						formData
 					);
-
-					dispatch({ type: "openTheSnack" });
+						console.log(response.data);
+					//dispatch({ type: "openTheSnack" });
 				} catch (e) {
 					dispatch({ type: "allowTheButton" });
+					console.log(e.response)
 				}
 			}
 			UpdateProfile();

@@ -10,6 +10,9 @@ import Testing from './Components/Testing';
 import Register from './Components/Register';
 import AddProperty from './Components/AddProperty';
 import Profile from './Components/Profile';
+import Agencies from './Components/Agencies';
+import AgencyDetail from './Components/AgencyDetail';
+import ListingDetail from './Components/ListingDetail';
 // MUI COMPONENTS
 import { StyledEngineProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -75,6 +78,9 @@ function App() {
   <Route path = '/register' element = {<Register></Register>}/>
   <Route path = '/addproperty' element = {<AddProperty></AddProperty>}/>
   <Route path = '/profile' element = {<Profile></Profile>}/>
+  <Route path = '/agencies' element = {<Agencies></Agencies>}/>
+  <Route path = '/agencies/:id' element = {<AgencyDetail></AgencyDetail>}/>
+  <Route path = '/listings/:id' element = {<ListingDetail></ListingDetail>}/>
   </Routes>
   
 
