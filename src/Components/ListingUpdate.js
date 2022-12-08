@@ -78,8 +78,8 @@ const propertyStatusOptions = [
 		label: "",
 	},
 	{
-		value: "Sale",
-		label: "Sale",
+		value: "Sublease",
+		label: "Sublease",
 	},
 	{
 		value: "Rent",
@@ -242,13 +242,15 @@ function ListingUpdate(props) {
 
 				try {
 					const response = await Axios.patch(
-						`https://www.lbrepcourseapi.com/api/listings/${props.listingData.id}/update/`,
+						`http://localhost:8000/api/listings/${props.listingData.id}/update/`,
 						formData
 					);
-
+					console.log(response.data);
+					
 					dispatch({ type: "openTheSnack" });
 				} catch (e) {
 					dispatch({ type: "allowTheButton" });
+					console.log(e.response)
 				}
 			}
 			UpdateProperty();
@@ -264,25 +266,18 @@ function ListingUpdate(props) {
 	}, [state.openSnack]);
 
 	function PriceDisplay() {
-		if (
-			state.propertyStatusValue === "Rent" &&
-			state.rentalFrequencyValue === "Day"
-		) {
-			return "Price per Day*";
-		} else if (
-			state.propertyStatusValue === "Rent" &&
-			state.rentalFrequencyValue === "Week"
-		) {
-			return "Price per Week*";
-		} else if (
-			state.propertyStatusValue === "Rent" &&
-			state.rentalFrequencyValue === "Month"
-		) {
-			return "Price per Month*";
-		} else {
-			return "Price*";
-		}
-	}
+        if (state.rentalFrequencyValue === 'Day') {
+            return 'Price Per Day*'
+        }
+        if (state.rentalFrequencyValue === 'Week') {
+            return 'Price Per Week*'
+        }
+        if (state.rentalFrequencyValue === 'Month') {
+            return 'Price Per Month*'
+        } else {
+            return "Price*"
+        }
+    }
 
 	return (
 		<div className={classes.formContainer}>

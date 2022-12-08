@@ -204,7 +204,9 @@ function AddProperty() {
         userProfile:{
             agencyName:'',
             phoneNumber:'',
-        }
+        },
+        openSnack:false,
+		disabledBtn:false,
     };
     function ReducerFunction(draft, action) {
         switch (action.type) {
@@ -266,6 +268,15 @@ function AddProperty() {
                 draft.userProfile.agencyName = action.profileObject.agency_name;
                 draft.userProfile.phoneNumber = action.profileObject.phone_number;
                 break;  
+            case 'openTheSnack':
+                draft.openSnack = true
+                break
+            case 'disableTheButton':
+                draft.disabledBtn = true
+                break	
+            case 'allowTheButton':
+                draft.disabledBtn = false
+                break	    
 
 
         }
@@ -408,6 +419,7 @@ function AddProperty() {
         e.preventDefault();
         console.log("the form has been submitted");
         dispatch({type:'changeSendRequest'});
+        dispatch({type:'disableTheButton'});
     }
 	
 	//------------------------send request-----------------//
@@ -440,9 +452,10 @@ function AddProperty() {
 				try{
 					const response = await Axios.post("http://localhost:8000/api/listings/create/",formData);
 					console.log(response.data)
-                    navigate('/listings')
+                    dispatch({type:'openTheSnack'})
 				}catch(e){
 					console.log(e.response);
+                    dispatch({type:"allowTheButton"})
 				}
 			}
 			AddProperty()
@@ -475,6 +488,7 @@ function AddProperty() {
         }else{
             return(
             <Button variant="contained" fullWidth type="submit"
+            disabled = {state.disabledBtn}
             className={
                 classes.registerBtn
         }>
@@ -488,6 +502,21 @@ function AddProperty() {
         dispatch({type: "getMap", mapData: map});
         return null
     }
+
+    useEffect(()=>{
+		if(state.openSnack){
+			setTimeout(()=>{
+			navigate("/listings");
+			},1500)
+		}
+
+	},[state.openSnack])
+
+
+
+
+
+
     return (<div className={
         classes.formContainer
     }>
@@ -805,8 +834,10 @@ state.parkingValue}
                     zoom={15}
                     scrollWheelZoom={true}>
 
-                    <TileLayer attribution='&copy;
-                                                                                                                                                                    <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                    <TileLayer
+							attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+						/>                                                                                                            
                     <TheMapComponent/> {
                     BoroughDisplay()
                 }
@@ -816,8 +847,6 @@ state.parkingValue}
                             state.markerPosition
                         }
                         ref={markerRef}></Marker>
-
-
                 </MapContainer>
             </Grid>
 
@@ -890,6 +919,15 @@ state.parkingValue}
                {submitButtonDisplay()}
             </Grid>
         </form>
+        <Snackbar
+  			open={state.openSnack}
+  			message="You have successfully added your property"
+			anchorOrigin={{
+				vertical:'bottom',
+				horizontal:'center',
+			}}
+
+				/>
 
 
 

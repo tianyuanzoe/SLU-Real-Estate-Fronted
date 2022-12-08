@@ -8,6 +8,11 @@ import StateContext from "../Contexts/StateContext";
 
 // Assets
 import defaultProfilePicture from "./Assets/defaultProfilePicture.jpg";
+import stadiumIconPng from './Assets/Mapicons/stadium.png';
+import hospitalIconPng from './Assets/Mapicons/hospital.png';
+import universityIconPng from './Assets/Mapicons/university.png';
+
+
 
 // MUI
 import {
@@ -22,11 +27,13 @@ import {
 	CardMedia,
 	CardContent,
 	CircularProgress,
+	Dialog,
 	TextField,
 	FormControlLabel,
 	Checkbox,
 	IconButton,
 	CardActions,
+	Snackbar,
 } from "@mui/material";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
@@ -35,7 +42,21 @@ import RoomIcon from "@mui/icons-material/Room";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 import { makeStyles } from "@mui/styles";
-import { SettingsEthernet } from "@mui/icons-material";
+import { PointOfSaleRounded, SettingsEthernet } from "@mui/icons-material";
+// React LeafLet
+import {
+    MapContainer,
+    TileLayer,
+    useMap,
+    Polygon,
+    Marker,
+	Popup
+} from 'react-leaflet';
+
+import { Icon } from "leaflet";
+
+//components
+import ListingUpdate from "./ListingUpdate";
 
 const useStyles = makeStyles({
 	sliderContainer:{
@@ -76,11 +97,33 @@ function ListingDetail() {
 	const GlobalState = useContext(StateContext);
 
 	const params = useParams();
+	const stadiumIcon = new Icon(
+		{
+			iconUrl:stadiumIconPng,
+			iconSize:[40,40]
+		}
+	);
+
+	const hospitalIcon = new Icon(
+		{
+			iconUrl:hospitalIconPng,
+			iconSize:[40,40]
+		}
+	);
+
+	const universityIcon = new Icon(
+		{
+			iconUrl:universityIconPng,
+			iconSize:[40,40]
+		}
+	);
 
 	const initialState = {
 		listingInfo:"",
 		dataIsLoading: true,
-		sellerProfileInfo:""
+		sellerProfileInfo:"",
+		openSnack:false,
+		disabledBtn:false,
 	};
 
 	function ReducerFuction(draft, action) {
@@ -93,7 +136,17 @@ function ListingDetail() {
 				draft.dataIsLoading = false;
 				break;
 			case 'catchSellerProfileInfo':
-				draft.sellerProfileInfo = action.profileObject	
+				draft.sellerProfileInfo = action.profileObject
+				break;
+			case 'openTheSnack':
+				draft.openSnack = true
+				break
+			case 'disableTheButton':
+				draft.disabledBtn = true
+				break	
+			case 'allowTheButton':
+				draft.disabledBtn = false
+				break			
 		}
 	}
 	const [currentPicture,setCurrentPicture] = useState(0);	
@@ -119,6 +172,46 @@ function PreviousPicture(){
 const date = new Date(state.listingInfo.date_posted)
 const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
 
+// ---------------------------delete listings-----------//
+async function DeleteHandler(){
+	const confirmDelete = window.confirm("Are you sure you want to delete this listing ?")
+	if (confirmDelete){
+		try{
+			const response = await Axios.delete(`http://localhost:8000/api/listings/${params.id}/delete/`);
+			console.log(response.data);
+			dispatch({type:'openTheSnack'})
+			dispatch({type:'disableTheButton'})
+			
+	
+		}catch(e){
+			dispatch({type:"allowTheButton"})
+			console.log(e.response.data)
+		}
+	}
+
+}
+//------------------------openSnack---------------//
+useEffect(()=>{
+	if(state.openSnack){
+		setTimeout(()=>{
+		navigate("/listings");
+		},1500)
+	}
+
+},[state.openSnack])
+
+//---------------------------------update form-------------//
+const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
 	// ----------------------request to get listing info-------
 	useEffect(() => {
 		async function GetListingInfo() {
@@ -126,12 +219,15 @@ const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYe
 				const response = await Axios.get(
 					`http://localhost:8000/api/listings/${params.id}/`
 				);
+				console.log(response.data);
 
 				dispatch({
 					type: "catchListingInfo",
 					listingObject: response.data,
 				});
-			} catch (e) {}
+			} catch (e) {
+				console.log(e.response)
+			}
 		}
 		GetListingInfo();
 	}, []);
@@ -338,9 +434,138 @@ const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYe
 						</Typography>
 					</Grid>
 				</Grid>
+				{GlobalState.userId == state.listingInfo.seller?(
+					<Grid item container justifyContent="space-around">
+					<Button variant = "contained" color = "primary"
+					onClick={handleClickOpen}
+					>
+						Update
+
+					</Button>
+					<Button variant = "contained" 
+					disabled = {state.disabledBtn}
+					color="error" onClick={DeleteHandler}>
+						Delete
+					</Button>
+					{/*---------------update------------  */}
+
+					<Dialog open={open} onClose={handleClose} fullScreen >
+					<ListingUpdate listingData = {state.listingInfo} closeDialog = {handleClose}/>
+      					</Dialog>
+				</Grid>
+				):""}
 			</Grid>
 
+			{/* -----------------------Map-------------- */}
+			<Grid item container style = {{marginTop:"1rem"}} spacing = {1} justifyContent = "space-between">
+				<Grid item xs = {3} style = {{overflow:"auto",height:"35rem"}}>
+				{state.listingInfo.listing_pois_within_10km.map(poi=>{
+					function DegreeToRadian(coordinate){
+						return coordinate*Math.PI/180
+					}
+						function CalculateDistance() {
+							const latitude1 = DegreeToRadian(state.listingInfo.latitude)
+							const longitude1 = DegreeToRadian(state.listingInfo.longitude)
+							const latitude2 = DegreeToRadian(poi.location.coordinates[0])
+							const longitude2 = DegreeToRadian(poi.location.coordinates[1])
+
+							// The formula
+							const latDiff = latitude2 - latitude1;
+							const lonDiff = longitude2 - longitude1;
+							const R = 6371000 / 1000;
+
+							const a =
+								Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+								Math.cos(latitude1) *
+									Math.cos(latitude2) *
+									Math.sin(lonDiff / 2) *
+									Math.sin(lonDiff / 2);
+							const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+							const d = R * c;
+
+							const dist =
+								Math.acos(
+									Math.sin(latitude1) * Math.sin(latitude2) +
+										Math.cos(latitude1) *
+											Math.cos(latitude2) *
+											Math.cos(lonDiff)
+								) * R;
+							return dist.toFixed(2);
+						}
+
+						
+						return (
+							<div key = {poi.id} style = {{marginBottom:"0.5rem",border:"1px solid black"}}>
+								<Typography variant="h6">{poi.name}</Typography>
+								<Typography variant = "subtitle1">{poi.type}|<span style = {{fontWeight:"bolder",color:"green"}}>{CalculateDistance()} kilometers</span></Typography>
+
+							</div>
+						)
+					})}
+				</Grid>
+				<Grid item xs = {9} style = {{height:"35rem"}}>
+				<MapContainer center={
+                        [state.listingInfo.latitude,state.listingInfo.longitude]
+                    }
+                    zoom={15}
+                    scrollWheelZoom={true}>
+
+                    <TileLayer attribution='&copy;
+              <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                    
+                    <Marker 
+					position = {[state.listingInfo.latitude,state.listingInfo.longitude]}>
+					<Popup>
+						{state.listingInfo.title}
+
+					</Popup>
+					</Marker>
+					{state.listingInfo.listing_pois_within_10km.map(poi=>{
+						function PoiIcon(){
+							if(poi.type === 'Stadium'){
+								return stadiumIcon;
+							}
+							else if(poi.type === "Hospital"){
+								return hospitalIcon;
+							}
+							else if(poi.type === "University"){
+								return universityIcon;
+							}
+						}
+						return (
+							<Marker 
+							key = {poi.id}
+							position={[poi.location.coordinates[0],poi.location.coordinates[1]]}
+							icon = {PoiIcon()}
+							>
+								<Popup>
+									{poi.name}
+								</Popup>
+							</Marker>
+						)
+					})}
+
+
+                </MapContainer>
+
+				</Grid>
+
+			</Grid>
+
+			<Snackbar
+  			open={state.openSnack}
+  			message="You have successfully deleted the property"
+			anchorOrigin={{
+				vertical:'bottom',
+				horizontal:'center',
+			}}
+
+				/>
+
 	</div>
+
 	
   )
 }

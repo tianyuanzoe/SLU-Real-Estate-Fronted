@@ -149,7 +149,7 @@ function ProfileUpdate(props) {
 						formData
 					);
 						console.log(response.data);
-					//dispatch({ type: "openTheSnack" });
+					dispatch({ type: "openTheSnack" });
 				} catch (e) {
 					dispatch({ type: "allowTheButton" });
 					console.log(e.response)

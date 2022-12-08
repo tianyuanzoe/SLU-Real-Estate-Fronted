@@ -1,9 +1,9 @@
-import React, {useState,useContext} from 'react'
+import React, {useState,useContext,useEffect} from 'react'
 import {Link,useNavigate} from "react-router-dom"
 //components
 import CustomCard from "./CustomCard"
 //MUI 
-import { Button,Typography,Grid,AppBar,Toolbar,Menu,MenuItem } from '@mui/material';
+import { Button,Typography,Grid,AppBar,Toolbar,Menu,MenuItem,Snackbar } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { makeStyles } from "@mui/styles";
 //Assets
@@ -79,6 +79,8 @@ function Header() {
     navigate('/profile')
   };
 
+  const[openSnack, setOpenSnack] = useState(false)
+
 
   async function handleLogout(){
     setAnchorEl(null);
@@ -90,13 +92,23 @@ function Header() {
         {headers:{Authorization:'Token '.concat(GlobalState.userToken)}});
         console.log(response);
         GlobalDispatch({type:"logout"});
-        navigate('/');
+        setOpenSnack(true);
+        
     
         }catch(e){
           console.log(e.response);
         }
     }
   }
+//----------------------openSnack------------------//
+  useEffect(()=>{
+		if(openSnack){
+			setTimeout(()=>{
+			navigate(0);
+			},1500)
+		}
+
+	},[openSnack])
 	return (
 		<AppBar position="static" style={{backgroundColor:"black"}}>
         <Toolbar>
@@ -130,6 +142,15 @@ function Header() {
         <MenuItem className = {classes.profileBtn} onClick={HandleProfile}>Profile</MenuItem>
         <MenuItem className = {classes.logoutBtn} onClick={handleLogout}>Logout</MenuItem>
       </Menu>
+      <Snackbar
+  			open={openSnack}
+  			message="You have successfully logged out"
+			anchorOrigin={{
+				vertical:'bottom',
+				horizontal:'center',
+			}}
+
+				/>
           
           </div>          
         </Toolbar>
