@@ -1,4 +1,10 @@
-import React, {useEffect, useState, useRef, useMemo,useContext} from "react";
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useMemo,
+    useContext
+} from "react";
 import {useNavigate} from "react-router-dom";
 import Axios from "axios";
 import {useImmerReducer} from "use-immer";
@@ -18,7 +24,7 @@ import Redmond from './Assets/Boroughs/Redmond';
 import Seattle from './Assets/Boroughs/Seattle';
 import SLU from './Assets/Boroughs/SLU';
 
-//Contexts
+// Contexts
 import StateContext from "../Contexts/StateContext";
 
 // MUI
@@ -171,7 +177,7 @@ const rentalFrequencyOptions = [
 function AddProperty() {
     const classes = useStyles();
     const navigate = useNavigate();
-	const GlobalState = useContext(StateContext)
+    const GlobalState = useContext(StateContext)
     const initialState = {
         titleValue: "",
         listingTypeValue: "",
@@ -197,38 +203,82 @@ function AddProperty() {
         mapInstance: null,
         markerPosition: {
             lat: "47.625650276247036",
-            lng: "-122.33418978466639",
+            lng: "-122.33418978466639"
         },
         uploadedPictures: [],
         sendRequest: 0,
-        userProfile:{
-            agencyName:'',
-            phoneNumber:'',
+        userProfile: {
+            agencyName: '',
+            phoneNumber: ''
         },
-        openSnack:false,
-		disabledBtn:false,
+        openSnack: false,
+        disabledBtn: false,
+        titleErrors: {
+            hasError: false,
+            errorMessage: ""
+        },
+        listingtTypeErrors: {
+            hasError: false,
+            errorMessage: ""
+        },
+        propertyStatusErrors: {
+            hasError: false,
+            errorMessage: ""
+        },
+        priceErrors: {
+            hasError: false,
+            errorMessage: ""
+        },
+        areaErrors: {
+            hasError: false,
+            errorMessage: ""
+        },
+        boroughErrors: {
+            hasError: false,
+            errorMessage: ""
+        },
+        rentalFrequencyErrors: {
+            hasError: false,
+            errorMessage: ""
+        }
+        
     };
     function ReducerFunction(draft, action) {
         switch (action.type) {
             case 'catchTitleChange': draft.titleValue = action.titleChosen
+                draft.titleErrors.hasError = false;
+                draft.titleErrors.errorMessage = ""
                 break
             case 'catchListingTypeChange': draft.listingTypeValue = action.listingTypeChosen
+                draft.listingtTypeErrors.hasError = false;
+                draft.listingtTypeErrors.errorMessage = ""
                 break
             case 'catchDescriptionChange': draft.descriptionValue = action.descriptionChosen
                 break
             case 'catchAreaChange': draft.areaValue = action.areaChosen
+                draft.areaErrors.hasError = false;
+                draft.areaErrors.errorMessage = ""
                 break
             case 'catchBoroughChange': draft.boroughValue = action.boroughChosen
+                draft.boroughErrors.hasError = false;
+                draft.boroughErrors.errorMessage = ""
                 break
             case 'catchLatitudeChange': draft.latitudeValue = action.latitudeChosen
                 break
             case 'catchLongitudeChange': draft.longitudeValue = action.longitudeChosen
                 break
             case 'catchPropertyStatusChange': draft.propertyStatusValue = action.propertyStatusChosen
+                draft.propertyStatusErrors.hasError = false;
+                draft.propertyStatusErrors.errorMessage = ""
                 break
             case 'catchPriceChange': draft.priceValue = action.priceChosen
+                draft.priceErrors.hasError = false;
+                draft.priceErrors.errorMessage = ""
                 break
-            case 'catchRentalFrequencyChange': draft.rentalFrequencyValue = action.rentalFrequencyChosen
+            case 'catchRentalFrequencyChange': 
+            draft.rentalFrequencyValue = action.rentalFrequencyChosen
+            draft.rentalFrequencyErrors.hasError = false;
+            draft.rentalFrequencyErrors.errorMessage = ""
                 break
             case 'catchRoomsChange': draft.roomsValue = action.roomsChosen
                 break
@@ -254,8 +304,7 @@ function AddProperty() {
                 break
             case 'getMap': draft.mapInstance = action.mapData;
                 break
-            case 'changeMarkerPosition':
-                 draft.markerPosition.lat = action.changeLatitude;
+            case 'changeMarkerPosition': draft.markerPosition.lat = action.changeLatitude;
                 draft.markerPosition.lng = action.changeLongitude;
                 draft.latitudeValue = "";
                 draft.longitudeValue = "";
@@ -264,19 +313,81 @@ function AddProperty() {
                 break
             case 'changeSendRequest': draft.sendRequest = draft.sendRequest + 1;
                 break
-            case 'catchUserProfileInfo':
-                draft.userProfile.agencyName = action.profileObject.agency_name;
+            case 'catchUserProfileInfo': draft.userProfile.agencyName = action.profileObject.agency_name;
                 draft.userProfile.phoneNumber = action.profileObject.phone_number;
-                break;  
-            case 'openTheSnack':
-                draft.openSnack = true
+                break;
+            case 'openTheSnack': draft.openSnack = true
                 break
-            case 'disableTheButton':
-                draft.disabledBtn = true
-                break	
-            case 'allowTheButton':
-                draft.disabledBtn = false
-                break	    
+            case 'disableTheButton': draft.disabledBtn = true
+                break
+            case 'allowTheButton': draft.disabledBtn = false
+                break
+            case 'catchTitleErrors':
+                if (action.titleChosen.length === 0) {
+                    draft.titleErrors.hasError = true
+                    draft.titleErrors.errorMessage = 'This field must not be empty'
+                }
+                break
+            case 'catchListingTypeErrors':
+                if (action.listingTypeChosen.length === 0) {
+                    draft.listingtTypeErrors.hasError = true
+                    draft.listingtTypeErrors.errorMessage = 'This field must not be empty'
+                }
+                break
+            case 'catchPropertyStatusErrors':
+                if (action.propertyStatusChosen.length === 0) {
+                    draft.propertyStatusErrors.hasError = true
+                    draft.propertyStatusErrors.errorMessage = 'This field must not be empty'
+                }
+                break
+            case 'catchPriceErrors':
+                if (action.priceChosen.length === 0) {
+                    draft.priceErrors.hasError = true
+                    draft.priceErrors.errorMessage = 'This field must not be empty'
+                }
+                break
+            case 'catchAreaErrors':
+                if (action.areaChosen.length === 0) {
+                    draft.areaErrors.hasError = true
+                    draft.areaErrors.errorMessage = 'This field must not be empty'
+                }
+                break
+            case 'catchBoroughErrors':
+                if (action.boroughChosen.length === 0) {
+                    draft.boroughErrors.hasError = true
+                    draft.boroughErrors.errorMessage = 'This field must not be empty'
+                }
+                break
+                case 'catchRentalFrequencyErrors':
+                    if (action.rentalFrequencyChosen.length === 0) {
+                        draft.rentalFrequencyErrors.hasError = true
+                        draft.rentalFrequencyErrors.errorMessage = 'This field must not be empty'
+                    }
+                    break    
+            
+                
+
+            case 'emptyTitle': draft.titleErrors.hasError = true
+                draft.titleErrors.errorMessage = "This field must not be empty"
+                break
+            case 'emptyListingType': draft.listingtTypeErrors.hasError = true
+                draft.listingtTypeErrors.errorMessage = "This field must not be empty"
+                break
+            case 'emptyPropertyStatus': draft.propertyStatusErrors.hasError = true
+                draft.propertyStatusErrors.errorMessage = "This field must not be empty"
+                break
+            case 'emptyPrice': draft.priceErrors.hasError = true
+                draft.priceErrors.errorMessage = "This field must not be empty"
+                break
+            case 'emptyArea': draft.areaErrors.hasError = true
+                draft.areaErrors.errorMessage = "This field must not be empty"
+                break
+            case 'emptyBorough': draft.boroughErrors.hasError = true
+                draft.boroughErrors.errorMessage = "This field must not be empty"
+                break
+            case 'emptyRentalFrequency': draft.rentalFrequencyErrors.hasError = true
+                draft.rentalFrequencyErrors.errorMessage = "This field must not be empty"
+                break
 
 
         }
@@ -325,26 +436,26 @@ function AddProperty() {
             dispatch({type: "changeMarkerPosition", changeLatitude: 47.6773660077177, changeLongitude: -122.12026704269996})
         }
 
-    },[state.boroughValue])
+    }, [state.boroughValue])
     // --------------------------boroughdisplay function-----------------//
     function BoroughDisplay() {
         if (state.boroughValue === 'South Lake Union') {
-            return <Polygon positions = {SLU} />
+            return <Polygon positions={SLU}/>
         }
         if (state.boroughValue === 'Bellevue') {
-            return <Polygon positions = {Bellevue} />
+            return <Polygon positions={Bellevue}/>
         }
         if (state.boroughValue === 'Bothell') {
-            return <Polygon positions = {Bothell} />
+            return <Polygon positions={Bothell}/>
         }
         if (state.boroughValue === 'Kirkland') {
-            return <Polygon positions = {Kirkland} />
+            return <Polygon positions={Kirkland}/>
         }
         if (state.boroughValue === 'Redmond') {
-            return <Polygon positions = {Redmond} />
+            return <Polygon positions={Redmond}/>
         }
         if (state.boroughValue === 'Seattle') {
-            return <Polygon positions = {Seattle} />
+            return <Polygon positions={Seattle}/>
         }
     }
     // -------------------------Draggable marker-------------------//
@@ -354,7 +465,7 @@ function AddProperty() {
     const eventHandlers = useMemo(() => ({
         dragend() {
             const marker = markerRef.current;
-			//console.log(marker.getLatLng());
+            // console.log(marker.getLatLng());
             dispatch({type: 'catchLatitudeChange', latitudeChosen: marker.getLatLng().lat})
             dispatch({type: 'catchLongitudeChange', longitudeChosen: marker.getLatLng().lng})
 
@@ -396,72 +507,106 @@ function AddProperty() {
 
     }, [state.uploadedPictures[4]])
 
-    useEffect(()=>{
-		console.log(state.latitudeValue,state.longitudeValue);
-	},[state.latitudeValue,state.longitudeValue])
+    useEffect(() => {
+        console.log(state.latitudeValue, state.longitudeValue);
+    }, [state.latitudeValue, state.longitudeValue])
 
-    //-----------------request to get a profile info-----------//
-    useEffect(()=>{
-        async function GetProfileInfo(){
-            try{
-                const response = await Axios.get(`http://localhost:8000/api/profiles/${GlobalState.userId}/`);
+    // -----------------request to get a profile info-----------//
+    useEffect(() => {
+        async function GetProfileInfo() {
+            try {
+                const response = await Axios.get(`http://localhost:8000/api/profiles/${
+                    GlobalState.userId
+                }/`);
                 console.log(response.data)
-                dispatch({type:'catchUserProfileInfo',profileObject:response.data,})
-            }catch(e){
+                dispatch({type: 'catchUserProfileInfo', profileObject: response.data})
+            } catch (e) {
                 console.log(e.response)
             }
         }
         GetProfileInfo()
-    },[])
-	//---------------------------Form Submit-----------------//
+    }, [])
+    // ---------------------------Form Submit-----------------//
 
     function FormSubmit(e) {
         e.preventDefault();
         console.log("the form has been submitted");
-        dispatch({type:'changeSendRequest'});
-        dispatch({type:'disableTheButton'});
+        if (!state.titleErrors.hasError && 
+            !state.listingtTypeErrors.hasError && 
+            !state.propertyStatusErrors.hasError &&
+             !state.priceErrors.hasError && 
+             !state.rentalFrequencyErrors&&
+            !state.areaErrors.hasError && 
+            !state.boroughErrors.hasError && 
+            state.latitudeValue && state.longitudeValue) {
+            dispatch({type: 'changeSendRequest'});
+            dispatch({type: 'disableTheButton'});
+
+        } else if (state.titleValue === "") {
+            dispatch({type: "emptyTitle"})
+            window.scrollTo(0, 0)
+        } else if (state.listingTypeValue === "") {
+            dispatch({type: "emptyListingType"})
+            window.scrollTo(0, 0)
+        } else if (state.propertyStatusValue === "") {
+            dispatch({type: "emptyPropertyStatus"})
+            window.scrollTo(0, 0)
+        } else if (state.priceValue === "") {
+            dispatch({type: "emptyPrice"})
+            window.scrollTo(0, 0)
+        } else if (state.areaValue === "") {
+            dispatch({type: "emptyArea"})
+            window.scrollTo(0, 0)
+        } else if (state.boroughValue === "") {
+            dispatch({type: "emptyBorough"})
+            window.scrollTo(0, 0)
+        } else if (state.rentalFrequencyValue === "") {
+            dispatch({type: "emptyRentalFrequency"})
+            window.scrollTo(0, 0)
+        }
+
     }
-	
-	//------------------------send request-----------------//
-	useEffect(()=>{
-		if(state.sendRequest){
-			async function AddProperty(){
-				const formData = new FormData()
-				formData.append('title',state.titleValue);
-				formData.append('description',state.descriptionValue);
-				formData.append('area',state.areaValue);
-				formData.append('borough',state.boroughValue);
-				formData.append('listing_type',state.listingTypeValue);
-				formData.append('property_status',state.propertyStatusValue);
-				formData.append('rental_frequency',state.rentalFrequencyValue);
-				formData.append('price',state.priceValue);
-				formData.append('rooms',state.roomsValue);
-				formData.append('furnished',state.furnishedValue);
-				formData.append('pool',state.poolValue);
-				formData.append('elevator',state.elevatorValue);
-				formData.append('cctv',state.cctvValue);
-				formData.append('parking',state.parkingValue);
-				formData.append('latitude',state.latitudeValue);
-				formData.append('longitude',state.longitudeValue);
-				formData.append('picture1',state.picture1Value);
-				formData.append('picture2',state.picture2Value);
-				formData.append('picture3',state.picture3Value);
-				formData.append('picture4',state.picture4Value);
-				formData.append('picture5',state.picture5Value);
-				formData.append('seller',GlobalState.userId);
-				try{
-					const response = await Axios.post("http://localhost:8000/api/listings/create/",formData);
-					console.log(response.data)
-                    dispatch({type:'openTheSnack'})
-				}catch(e){
-					console.log(e.response);
-                    dispatch({type:"allowTheButton"})
-				}
-			}
-			AddProperty()
-		}
-	},[state.sendRequest]);
-    //----------------------------Price Display-----------------//
+
+    // ------------------------send request-----------------//
+    useEffect(() => {
+        if (state.sendRequest) {
+            async function AddProperty() {
+                const formData = new FormData()
+                formData.append('title', state.titleValue);
+                formData.append('description', state.descriptionValue);
+                formData.append('area', state.areaValue);
+                formData.append('borough', state.boroughValue);
+                formData.append('listing_type', state.listingTypeValue);
+                formData.append('property_status', state.propertyStatusValue);
+                formData.append('rental_frequency', state.rentalFrequencyValue);
+                formData.append('price', state.priceValue);
+                formData.append('rooms', state.roomsValue);
+                formData.append('furnished', state.furnishedValue);
+                formData.append('pool', state.poolValue);
+                formData.append('elevator', state.elevatorValue);
+                formData.append('cctv', state.cctvValue);
+                formData.append('parking', state.parkingValue);
+                formData.append('latitude', state.latitudeValue);
+                formData.append('longitude', state.longitudeValue);
+                formData.append('picture1', state.picture1Value);
+                formData.append('picture2', state.picture2Value);
+                formData.append('picture3', state.picture3Value);
+                formData.append('picture4', state.picture4Value);
+                formData.append('picture5', state.picture5Value);
+                formData.append('seller', GlobalState.userId);
+                try {
+                    const response = await Axios.post("http://localhost:8000/api/listings/create/", formData);
+                    console.log(response.data)
+                    dispatch({type: 'openTheSnack'})
+                } catch (e) {
+                    console.log(e.response);
+                    dispatch({type: "allowTheButton"})
+                }
+            }
+            AddProperty()
+        }
+    }, [state.sendRequest]);
+    // ----------------------------Price Display-----------------//
     function PriceDisplay() {
         if (state.rentalFrequencyValue === 'Day') {
             return 'Price Per Day*'
@@ -475,24 +620,28 @@ function AddProperty() {
             return "Price*"
         }
     }
-    function submitButtonDisplay(){
-        if(!GlobalState.userIsLogged){
+    function submitButtonDisplay() {
+        if (! GlobalState.userIsLogged) {
             return (
-                <Button variant="outlined" fullWidth 
-                onClick={()=>navigate("/login")}
-                className={
-                    classes.registerBtn
-            }>
-                SIGN IN TO ADD A PROPERTY</Button>
+                <Button variant="outlined" fullWidth
+                    onClick={
+                        () => navigate("/login")
+                    }
+                    className={
+                        classes.registerBtn
+                }>
+                    SIGN IN TO ADD A PROPERTY</Button>
             )
-        }else{
-            return(
-            <Button variant="contained" fullWidth type="submit"
-            disabled = {state.disabledBtn}
-            className={
-                classes.registerBtn
-        }>
-            SUBMIT</Button>
+        } else {
+            return (
+                <Button variant="contained" fullWidth type="submit"
+                    disabled={
+                        state.disabledBtn
+                    }
+                    className={
+                        classes.registerBtn
+                }>
+                    SUBMIT</Button>
             )
         }
     }
@@ -503,435 +652,528 @@ function AddProperty() {
         return null
     }
 
-    useEffect(()=>{
-		if(state.openSnack){
-			setTimeout(()=>{
-			navigate("/listings");
-			},1500)
-		}
-
-	},[state.openSnack])
-
-
-
-
-
-
-    return (<div className={
-        classes.formContainer
-    }>
-        <form onSubmit={FormSubmit}>
-            <Grid item container justifyContent="center">
-                <Typography variant='h4'>
-                    SUBMIT A PROPERTY
-                </Typography>
-            </Grid>
-
-			{/* ----------------------Title----------------- */}
-
-            <Grid item container
-                style={
-                    {marginTop: "1rem"}
-            }>
-                <TextField id="title" label="Title*" variant="standard" fullWidth
-                    value={
-                        state.titleValue
-                    }
-                    onChange=
-                    {(e)=>dispatch({type:"catchTitleChange",titleChosen:e.target.value})}/>
-            </Grid>
-			{/* ----------------------Listing Type----------------- */}
-
-            <Grid item container justifyContent='space-between'>
-                <Grid item
-                    xs={5}
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <TextField id="listingType" label="Listing Type*" variant="standard" fullWidth
-                        value={
-                            state.listingType
-                        }
-                        onChange=
-                        {(e)=>dispatch({type:"catchListingTypeChange",listingTypeChosen:e.target.value})}
-                        select
-                        SelectProps={
-                            {native: true}
-                    }> {
-                        listingTypeOptions.map((option) => (<option key={
-                                option.value
-                            }
-                            value={
-                                option.value
-                        }> {
-                            option.label
-                        } </option>))
-                    } </TextField>
-
-                </Grid>
-					{/* ----------------------property----------------- */}
-
-                <Grid item
-                    xs={5}
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <TextField id="propertyStatue" label="Property Status*" variant="standard" fullWidth
-                        value={
-                            state.propertyStatusValue
-                        }
-                        onChange=
-                        {(e)=>dispatch({type:"catchPropertyStatusChange",propertyStatusChosen:e.target.value})}
-                        select
-                        SelectProps={
-                            {native: true}
-                    }> {
-                        propertyStatusOptions.map((option) => (<option key={
-                                option.value
-                            }
-                            value={
-                                option.value
-                        }> {
-                            option.label
-                        } </option>))
-                    } </TextField>
-                </Grid>
-
-
-            </Grid>
-
-			{/* -------------------------Rental Frequency------------- */}
-
-            <Grid item container justifyContent='space-between'>
-                <Grid item
-                    xs={5}
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <TextField id="rentalFrequency" label="Rental Frequency*" variant="standard" fullWidth
-                        value={
-                            state.rentalFrequencyValue
-                        }
-                        onChange=
-                        {(e)=>dispatch({type:"catchRentalFrequencyChange",rentalFrequencyChosen:e.target.value})}
-                        select
-                        SelectProps={
-                            {native: true}
-                    }> {
-                        rentalFrequencyOptions.map((option) => (<option key={
-                                option.value
-                            }
-                            value={
-                                option.value
-                        }> {
-                            option.label
-                        } </option>))
-                    } </TextField>
-                </Grid>
-
-                {/* --------------------Price field---------------- */}
-
-                <Grid item
-                    xs={5}
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <TextField id="price" type="number"
-                        label={
-                            PriceDisplay()
-                        }
-                        variant="standard"
-                        fullWidth
-                        value={
-                            state.priceValue
-                        }
-                        onChange=
-                        {(e)=>dispatch({type:"catchPriceChange",priceChosen:e.target.value})}/>
-                </Grid>
-
-
-            </Grid>
-
-
-            <Grid item container
-                style={
-                    {marginTop: "1rem"}
-            }>
-                <TextField id="description" label="Description" variant="outlined" fullWidth multiline
-                    rows={6}
-                    value={
-                        state.descriptionValue
-                    }
-                    onChange=
-                    {(e)=>dispatch({type:"catchDescriptionChange",descriptionChosen:e.target.value})}/>
-            </Grid>
-
-            {/* -------------------Room field------------------------ */}
-
-            {
-            state.listingTypeValue === 'Office' ? '' : <Grid item type="number"
-                xs={3}
-                container
-                style={
-                    {marginTop: "1rem"}
-            }>
-                <TextField id="rooms" label="Rooms" variant="standard" fullWidth
-                    value={
-                        state.roomsValue
-                    }
-                    onChange=
-                    {(e)=>dispatch({type:"catchRoomsChange",roomsChosen:e.target.value})}/>
-            </Grid>
+    useEffect(() => {
+        if (state.openSnack) {
+            setTimeout(() => {
+                navigate("/listings");
+            }, 1500)
         }
 
-            {/* checked field */}
-            <Grid item container justifyContent="space-between">
-                <Grid item
+    }, [state.openSnack])
+
+
+    return (
+        <div className={
+            classes.formContainer
+        }>
+            <form onSubmit={FormSubmit}>
+                <Grid item container justifyContent="center">
+                    <Typography variant='h4'>
+                        SUBMIT A PROPERTY
+                    </Typography>
+                </Grid>
+
+                {/* ----------------------Title----------------- */}
+
+                <Grid item container
                     style={
                         {marginTop: "1rem"}
                 }>
-                    <FormControlLabel control={<Checkbox
-                            checked={
+                    <TextField id="title" label="Title*" variant="standard" fullWidth
+                        value={
+                            state.titleValue
+                        }
+                        onChange=
+                        {(e)=>dispatch({type:"catchTitleChange",titleChosen:e.target.value})}
+                        onBlur=
+                        {(e)=>dispatch({type:"catchTitleErrors",titleChosen:e.target.value})}
+                        error={
+                            state.titleErrors.hasError ? true : false
+                        }
+                        helperText={
+                            state.titleErrors.errorMessage
+                        }/>
+                </Grid>
+                {/* ----------------------Listing Type----------------- */}
+
+                <Grid item container justifyContent='space-between'>
+                    <Grid item
+                        xs={5}
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <TextField id="listingType" label="Listing Type*" variant="standard" fullWidth
+                            value={
+                                state.listingType
+                            }
+                            onChange=
+                            {(e)=>dispatch({type:"catchListingTypeChange",listingTypeChosen:e.target.value})}
+                            onBlur=
+                            {(e)=>dispatch({type:"catchListingTypeErrors",listingTypeChosen:e.target.value})}
+                            select
+                            SelectProps={
+                                {native: true}
+                            }
+                            error={
+                                state.listingtTypeErrors.hasError ? true : false
+                            }
+                            helperText={
+                                state.listingtTypeErrors.errorMessage
+                        }>
+                            {
+                            listingTypeOptions.map((option) => (
+                                <option key={
+                                        option.value
+                                    }
+                                    value={
+                                        option.value
+                                }>
+                                    {
+                                    option.label
+                                } </option>
+                            ))
+                        } </TextField>
+
+                    </Grid>
+                    {/* ----------------------property----------------- */}
+
+                    <Grid item
+                        xs={5}
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <TextField id="propertyStatue" label="Property Status*" variant="standard" fullWidth
+                            value={
+                                state.propertyStatusValue
+                            }
+                            onChange=
+                            {(e)=>dispatch({type:"catchPropertyStatusChange",propertyStatusChosen:e.target.value})}
+                            onBlur=
+                            {(e)=>dispatch({type:"catchPropertyStatusErrors",propertyStatusChosen:e.target.value})}
+                            select
+                            SelectProps={
+                                {native: true}
+                            }
+                            error={
+                                state.propertyStatusErrors.hasError ? true : false
+                            }
+                            helperText={
+                                state.propertyStatusErrors.errorMessage
+                        }>
+                            {
+                            propertyStatusOptions.map((option) => (
+                                <option key={
+                                        option.value
+                                    }
+                                    value={
+                                        option.value
+                                }>
+                                    {
+                                    option.label
+                                } </option>
+                            ))
+                        } </TextField>
+                    </Grid>
+
+
+                </Grid>
+
+                {/* -------------------------Rental Frequency------------- */}
+
+                <Grid item container justifyContent='space-between'>
+                    <Grid item
+                        xs={5}
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <TextField id="rentalFrequency" label="Rental Frequency*" variant="standard" fullWidth
+                            value={
+                                state.rentalFrequencyValue
+                            }
+                            onChange=
+                            {(e)=>dispatch({type:"catchRentalFrequencyChange",rentalFrequencyChosen:e.target.value})}
+                            onBlur=
+                            {(e)=>dispatch({type:"catchRentalFrequencyErrors",rentalFrequencyChosen:e.target.value})}
+                            select
+                            SelectProps={
+                                {native: true}
+                        }
+                        error={
+                            state.rentalFrequencyErrors.hasError ? true : false
+                        }
+                        helperText={
+                            state.rentalFrequencyErrors.errorMessage
+                    }
+                        >
+                            {
+                            rentalFrequencyOptions.map((option) => (
+                                <option key={
+                                        option.value
+                                    }
+                                    value={
+                                        option.value
+                                }>
+                                    {
+                                    option.label
+                                } </option>
+                            ))
+                        } </TextField>
+                    </Grid>
+
+                    {/* --------------------Price field---------------- */}
+
+                    <Grid item
+                        xs={5}
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <TextField id="price" type="number"
+                            label={
+                                PriceDisplay()
+                            }
+                            variant="standard"
+                            fullWidth
+                            value={
+                                state.priceValue
+                            }
+                            onChange=
+                            {(e)=>dispatch({type:"catchPriceChange",priceChosen:e.target.value})}
+                            onBlur=
+                            {(e)=>dispatch({type:"catchPriceErrors",priceChosen:e.target.value})}
+                            error={
+                                state.priceErrors.hasError ? true : false
+                            }
+                            helperText={
+                                state.priceErrors.errorMessage
+                            }/>
+                    </Grid>
+
+
+                </Grid>
+
+
+                <Grid item container
+                    style={
+                        {marginTop: "1rem"}
+                }>
+                    <TextField id="description" label="Description" variant="outlined" fullWidth multiline
+                        rows={6}
+                        value={
+                            state.descriptionValue
+                        }
+                        onChange=
+                        {(e)=>dispatch({type:"catchDescriptionChange",descriptionChosen:e.target.value})}/>
+                </Grid>
+
+                {/* -------------------Room field------------------------ */}
+
+                {
+                state.listingTypeValue === 'Office' ? '' : <Grid item type="number"
+                    xs={3}
+                    container
+                    style={
+                        {marginTop: "1rem"}
+                }>
+                    <TextField id="rooms" label="Rooms" variant="standard" fullWidth
+                        value={
+                            state.roomsValue
+                        }
+                        onChange=
+                        {(e)=>dispatch({type:"catchRoomsChange",roomsChosen:e.target.value})}/>
+                </Grid>
+            }
+
+                {/* checked field */}
+                <Grid item container justifyContent="space-between">
+                    <Grid item
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <FormControlLabel control={<Checkbox
+                                checked={
 state.furnishedValue}
-                        onChange=
-                        {(e)=>dispatch({type:"catchFurnishedChange",furnishedChosen:e.target.checked})}/>}
-                        label="Furnished"/>
-                </Grid>
+                            onChange=
+                            {(e)=>dispatch({type:"catchFurnishedChange",furnishedChosen:e.target.checked})}/>}
+                            label="Furnished"/>
+                    </Grid>
 
-                <Grid item
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <FormControlLabel control={<Checkbox
-                            checked={
+                    <Grid item
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <FormControlLabel control={<Checkbox
+                                checked={
 state.poolValue}
-                        onChange=
-                        {(e)=>dispatch({type:"catchPoolChange",poolChosen:e.target.checked})}/>}
-                        label="Pool"/>
-                </Grid>
+                            onChange=
+                            {(e)=>dispatch({type:"catchPoolChange",poolChosen:e.target.checked})}/>}
+                            label="Pool"/>
+                    </Grid>
 
-                <Grid item
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <FormControlLabel control={<Checkbox
-                            checked={
+                    <Grid item
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <FormControlLabel control={<Checkbox
+                                checked={
 state.elevatorValue}
-                        onChange=
-                        {(e)=>dispatch({type:"catchElevatorChange",elevatorChosen:e.target.checked})}/>}
-                        label="Elevator"/>
-                </Grid>
+                            onChange=
+                            {(e)=>dispatch({type:"catchElevatorChange",elevatorChosen:e.target.checked})}/>}
+                            label="Elevator"/>
+                    </Grid>
 
-                <Grid item
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <FormControlLabel control={<Checkbox
-                            checked={
+                    <Grid item
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <FormControlLabel control={<Checkbox
+                                checked={
 state.cctvValue}
-                        onChange=
-                        {(e)=>dispatch({type:"catchCctvChange",cctvChosen:e.target.checked})}/>}
-                        label="Cctv"/>
-                </Grid>
+                            onChange=
+                            {(e)=>dispatch({type:"catchCctvChange",cctvChosen:e.target.checked})}/>}
+                            label="Cctv"/>
+                    </Grid>
 
-                <Grid item
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <FormControlLabel control={<Checkbox
-                            checked={
+                    <Grid item
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <FormControlLabel control={<Checkbox
+                                checked={
 state.parkingValue}
-                        onChange=
-                        {(e)=>dispatch({type:"catchParkingChange",parkingChosen:e.target.checked})}/>}
-                        label="Parking"/>
+                            onChange=
+                            {(e)=>dispatch({type:"catchParkingChange",parkingChosen:e.target.checked})}/>}
+                            label="Parking"/>
+                    </Grid>
+
+
                 </Grid>
 
 
-            </Grid>
-
-
-            {/* Area field */}
-            <Grid item container justifyContent="space-between">
-                <Grid item
-                    xs={5}
-                    style={
-                        {marginTop: "1rem"}
-                }>
-                    <TextField id="area" label="Area*" variant="standard" fullWidth
-                        value={
-                            state.areaValue
-                        }
-                        onChange=
-                        {(e)=>dispatch({type:"catchAreaChange",areaChosen:e.target.value})}
-                        select
-                        SelectProps={
-                            {native: true}
-                    }> {
-                        areaOptions.map((option) => (<option key={
-                                option.value
-                            }
+                {/*---------------------- Area field------ */}
+                <Grid item container justifyContent="space-between">
+                    <Grid item
+                        xs={5}
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <TextField id="area" label="Area*" variant="standard" fullWidth
                             value={
-                                option.value
-                        }> {
-                            option.label
-                        } </option>))
-                    } </TextField>
+                                state.areaValue
+                            }
+                            onChange=
+                            {(e)=>dispatch({type:"catchAreaChange",areaChosen:e.target.value})}
+                            onBlur=
+                            {(e)=>dispatch({type:"catchAreaErrors",areaChosen:e.target.value})}
+                            select
+                            SelectProps={
+                                {native: true}
+                            }
+                            error={
+                                state.areaErrors.hasError ? true : false
+                            }
+                            helperText={
+                                state.areaErrors.errorMessage
+                        }>
+                            {
+                            areaOptions.map((option) => (
+                                <option key={
+                                        option.value
+                                    }
+                                    value={
+                                        option.value
+                                }>
+                                    {
+                                    option.label
+                                } </option>
+                            ))
+                        } </TextField>
+                    </Grid>
+
+                    {/* Borough field */}
+
+                    <Grid item
+                        xs={5}
+                        style={
+                            {marginTop: "1rem"}
+                    }>
+                        <TextField id="borough" label="Borough*" variant="standard" fullWidth
+                            value={
+                                state.boroughValue
+                            }
+                            onChange=
+                            {(e)=>dispatch({type:"catchBoroughChange",boroughChosen:e.target.value})}
+                            onBlur=
+                            {(e)=>dispatch({type:"catchBoroughErrors",boroughChosen:e.target.value})}
+                            select
+                            SelectProps={
+                                {native: true}
+                            }
+                            error={
+                                state.boroughErrors.hasError ? true : false
+                            }
+                            helperText={
+                                state.boroughErrors.errorMessage
+                        }>
+                            {
+                            state.areaValue === 'Inner SLU' ? innerSLUOptions.map((option) => (
+                                <option key={
+                                        option.value
+                                    }
+                                    value={
+                                        option.value
+                                }>
+                                    {
+                                    option.label
+                                } </option>
+                            )) : ""
+                        }
+                            {
+                            state.areaValue === 'Outer SLU' ? outerSLUOptions.map((option) => (
+                                <option key={
+                                        option.value
+                                    }
+                                    value={
+                                        option.value
+                                }>
+                                    {
+                                    option.label
+                                } </option>
+                            )) : ""
+                        } </TextField>
+
+                    </Grid>
                 </Grid>
 
-                {/* Borough field */}
 
+                {/* Map */}
                 <Grid item
-                    xs={5}
                     style={
                         {marginTop: "1rem"}
                 }>
-                    <TextField id="borough" label="Borough*" variant="standard" fullWidth
-                        value={
-                            state.boroughValue
+                    {
+                    state.latitudeValue && state.longitudeValue ? (
+                        <Alert severity="success">
+                            Your property is located @ {
+                            state.latitudeValue
+                        },{" "}
+                            {
+                            state.longitudeValue
+                        }</Alert>
+                    ) : (
+                        <Alert severity='warning'>
+                            Locate your property on the map before submitting this form</Alert>
+                    )
+                } </Grid>
+
+                <Grid item container
+                    style={
+                        {
+                            height: '35rem',
+                            marginTop: '1rem'
                         }
-                        onChange=
-                        {(e)=>dispatch({type:"catchBoroughChange",boroughChosen:e.target.value})}
-                        select
-                        SelectProps={
-                            {native: true}
-                    }> {
-                        state.areaValue === 'Inner SLU' ? innerSLUOptions.map((option) => (<option key={
-                                option.value
+                }>
+                    <MapContainer center={
+                            [47.625650276247036, -122.33418978466639]
+                        }
+                        zoom={15}
+                        scrollWheelZoom={true}>
+
+                        <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                        <TheMapComponent/> {
+                        BoroughDisplay()
+                    }
+                        <Marker draggable
+                            eventHandlers={eventHandlers}
+                            position={
+                                state.markerPosition
                             }
-                            value={
-                                option.value
-                        }> {
-                            option.label
-                        } </option>)) : ""
+                            ref={markerRef}></Marker>
+                    </MapContainer>
+                </Grid>
+
+
+                {/*------------- upload picture button----------- */}
+                <Grid item container
+                    xs={6}
+                    style={
+                        {
+                            marginTop: "1rem",
+                            marginLeft: "auto",
+                            marginRight: "auto"
+                        }
+                }>
+                    <Button variant="contained" fullWidth component="label"
+                        className={
+                            classes.picturesBtn
+                    }>
+                        UPLOAD PICTURES(MAX 5)
+                        <input type="file" multiple accept="image/png,image/gif,image/jpeg" hidden
+                            onChange={
+                                (e) => dispatch({type: 'catchUploadedPictures', picturesChosen: e.target.files})
+                            }/>
+                    </Button>
+                </Grid>
+                {/*------------- show pictures name------------- */}
+                <Grid item container>
+                    <ul> {
+                        state.picture1Value ? <li> {
+                            state.picture1Value.name
+                        }</li> : ""
                     }
                         {
-                        state.areaValue === 'Outer SLU' ? outerSLUOptions.map((option) => (<option key={
-                                option.value
-                            }
-                            value={
-                                option.value
-                        }> {
-                            option.label
-                        } </option>)) : ""
-                    } </TextField>
+                        state.picture2Value ? <li> {
+                            state.picture2Value.name
+                        }</li> : ""
+                    }
+                        {
+                        state.picture3Value ? <li> {
+                            state.picture3Value.name
+                        }</li> : ""
+                    }
+                        {
+                        state.picture4Value ? <li> {
+                            state.picture4Value.name
+                        }</li> : ""
+                    }
+                        {
+                        state.picture5Value ? <li> {
+                            state.picture5Value.name
+                        }</li> : ""
+                    } </ul>
+
 
                 </Grid>
-            </Grid>
 
 
-            {/* Map */}
+                {/* -----------------Submit Button------------ */}
 
-            <Grid item container
-                style={
-                    {
-                        height: '35rem',
-                        marginTop: '1rem'
-                    }
-            }>
-                <MapContainer center={
-                        [47.625650276247036, -122.33418978466639]
-                    }
-                    zoom={15}
-                    scrollWheelZoom={true}>
-
-                    <TileLayer
-							attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-						/>                                                                                                            
-                    <TheMapComponent/> {
-                    BoroughDisplay()
-                }
-                    <Marker draggable
-                        eventHandlers={eventHandlers}
-                        position={
-                            state.markerPosition
+                <Grid item container
+                    xs={8}
+                    style={
+                        {
+                            marginTop: "1rem",
+                            marginLeft: "auto",
+                            marginRight: "auto"
                         }
-                        ref={markerRef}></Marker>
-                </MapContainer>
-            </Grid>
-
-           
-            
-            {/*------------- upload picture button----------- */}
-            <Grid item container
-                xs={6}
-                style={
-                    {
-                        marginTop: "1rem",
-                        marginLeft: "auto",
-                        marginRight: "auto"
-                    }
-            }>
-                <Button variant="contained" fullWidth component="label"
-                    className={
-                        classes.picturesBtn
                 }>
-                    UPLOAD PICTURES(MAX 5)
-                    <input type="file" multiple accept="image/png,image/gif,image/jpeg" hidden
-                        onChange={
-                            (e) => dispatch({type: 'catchUploadedPictures', picturesChosen: e.target.files})
-                        }/>
-                </Button>
-            </Grid>
-			{/*------------- show pictures name------------- */}
-			<Grid item container>
-                <ul> {
-                    state.picture1Value ? <li> {
-                        state.picture1Value.name
-                    }</li> : ""
+                    {
+                    submitButtonDisplay()
+                } </Grid>
+            </form>
+            <Snackbar open={
+                    state.openSnack
                 }
+                message="You have successfully added your property"
+                anchorOrigin={
                     {
-                    state.picture2Value ? <li> {
-                        state.picture2Value.name
-                    }</li> : ""
-                }
-                    {
-                    state.picture3Value ? <li> {
-                        state.picture3Value.name
-                    }</li> : ""
-                }
-                    {
-                    state.picture4Value ? <li> {
-                        state.picture4Value.name
-                    }</li> : ""
-                }
-                    {
-                    state.picture5Value ? <li> {
-                        state.picture5Value.name
-                    }</li> : ""
-                } </ul>
-
-
-            </Grid>
-
-
-			{/* -----------------Submit Button------------ */}
-
-			<Grid item container
-                xs={8}
-                style={
-                    {
-                        marginTop: "1rem",
-                        marginLeft: "auto",
-                        marginRight: "auto"
+                        vertical: 'bottom',
+                        horizontal: 'center'
                     }
-            }>
-               {submitButtonDisplay()}
-            </Grid>
-        </form>
-        <Snackbar
-  			open={state.openSnack}
-  			message="You have successfully added your property"
-			anchorOrigin={{
-				vertical:'bottom',
-				horizontal:'center',
-			}}
-
-				/>
+                }/>
 
 
-
-    </div>);
+        </div>
+    );
 }
 
 export default AddProperty
