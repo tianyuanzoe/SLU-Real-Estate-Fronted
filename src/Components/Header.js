@@ -93,6 +93,7 @@ function Header() {
         console.log(response);
         GlobalDispatch({type:"logout"});
         setOpenSnack(true);
+        navigate('/')
         
     
         }catch(e){

@@ -54,12 +54,12 @@ function App() {
     if (state.userIsLogged){
       localStorage.setItem("theUserUsername",state.userUsername)
       localStorage.setItem("theUserEmail",state.userEmail)
-      localStorage.setItem("theUserUseId",state.userId)
+      localStorage.setItem("theUserId",state.userId)
       localStorage.setItem("theUserToken",state.userToken)
     }else{
       localStorage.removeItem("theUserUsername")
       localStorage.removeItem("theUserEmail")
-      localStorage.removeItem("theUserUseId")
+      localStorage.removeItem("theUserId")
       localStorage.removeItem("theUserToken")
     }
   },[state.userIsLogged])

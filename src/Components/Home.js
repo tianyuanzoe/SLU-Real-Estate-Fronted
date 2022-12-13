@@ -1,6 +1,6 @@
 
 import React, {useState} from 'react'
-import {Link} from "react-router-dom"
+import {Link,useNavigate} from "react-router-dom"
 //MUI imports
 import { Button,Typography,Grid,AppBar,Toolbar } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -38,6 +38,7 @@ const useStyles = makeStyles({
 function Home() {
 	const [btnColor, setBtnColor] = useState("error");
 	const classes = useStyles();
+	const navigate = useNavigate();
 	return (
 		<>
 			<div style={{ position: "relative" }}>
@@ -47,7 +48,7 @@ function Home() {
 						FIND YOUR <span style={{ color: "green" }}>NEXT PROPERTY</span> OF 
 						<span style={{ color: "green" }}> SLU</span>
 					</Typography>
-					<Button variant="contained" className={classes.homeBtn}>
+					<Button variant="contained" className={classes.homeBtn} onClick={()=>navigate('/listings')}>
 						SEE ALL PROPERTIES
 					</Button>
 				</div>

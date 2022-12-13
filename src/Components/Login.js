@@ -119,7 +119,7 @@ function Login() {
 					console.log(response);
 					dispatch({type:"catchToken",tokenValue :response.data.auth_token});
 					GlobalDispatch({type:"catchToken",tokenValue :response.data.auth_token})
-					//navigate('/')
+					navigate('/')
 			}
 			catch(error){
 				console.log(error.response)

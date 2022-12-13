@@ -526,6 +526,8 @@ function AddProperty() {
         }
         GetProfileInfo()
     }, [])
+
+   
     // ---------------------------Form Submit-----------------//
 
     function FormSubmit(e) {

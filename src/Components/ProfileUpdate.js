@@ -67,6 +67,7 @@ function ProfileUpdate(props) {
 		sendRequest: 0,
 		openSnack: false,
 		disabledBtn: false,
+		
 	};
 
 	function ReducerFuction(draft, action) {

@@ -120,6 +120,9 @@ function Profile() {
         GetProfileInfo()
     }, []);
 
+    
+
+
 	//-------------------//------------------
 	function PropertiesDisplay() {
 		if (state.userProfile.sellerListings.length === 0) {
