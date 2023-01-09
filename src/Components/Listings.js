@@ -122,7 +122,7 @@ function Listings() {
 		async function GetAllListings(){
 			//console.log(response.data);
 			try{
-				const response = await Axios.get("http://localhost:8000/api/listings",{cancelToken:source.token});
+				const response = await Axios.get("http://seattlerentalapi/api/listings",{cancelToken:source.token});
 				setAllListings(response.data);
 				setDataIsLoading(false);
 			}
