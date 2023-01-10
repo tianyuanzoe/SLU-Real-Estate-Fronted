@@ -73,7 +73,7 @@ function AgencyDetail() {
 		async function GetProfileInfo() {
 			try {
 				const response = await Axios.get(
-					`http://localhost:8000/api/profiles/${params.id}/`
+					`https://www.seattlerental.rent/api/profiles/${params.id}/`
 				);
 
 				dispatch({
@@ -174,7 +174,7 @@ function AgencyDetail() {
 									// 		: defaultProfilePicture
 									// }
 									image={
-										`http://localhost:8000${listing.picture1}` ? `http://localhost:8000${listing.picture1}` : defaultProfilePicture
+										`https://www.seattlerental.rent${listing.picture1}` ? `https://www.seattlerental.rent${listing.picture1}` : defaultProfilePicture
 									}
 									alt="Listing Picture"
 									onClick={() => navigate(`/listings/${listing.id}`)}

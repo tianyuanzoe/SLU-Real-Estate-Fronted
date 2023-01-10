@@ -177,7 +177,7 @@ async function DeleteHandler(){
 	const confirmDelete = window.confirm("Are you sure you want to delete this listing ?")
 	if (confirmDelete){
 		try{
-			const response = await Axios.delete(`http://localhost:8000/api/listings/${params.id}/delete/`);
+			const response = await Axios.delete(`https://www.seattlerental.rent/api/listings/${params.id}/delete/`);
 			console.log(response.data);
 			dispatch({type:'openTheSnack'})
 			dispatch({type:'disableTheButton'})
@@ -217,7 +217,7 @@ const [open, setOpen] = React.useState(false);
 		async function GetListingInfo() {
 			try {
 				const response = await Axios.get(
-					`http://localhost:8000/api/listings/${params.id}/`
+					`https://www.seattlerental.rent/api/listings/${params.id}/`
 				);
 				console.log(response.data);
 

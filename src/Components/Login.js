@@ -109,7 +109,7 @@ function Login() {
 			const source = Axios.CancelToken.source();
 			async function SignIn(){
 			try{
-				const response = await Axios.post("http://localhost:8000/api-auth-djoser/token/login/",
+				const response = await Axios.post("https://www.seattlerental.rent/api-auth-djoser/token/login/",
 					{
 						username: state.usernameValue,
 						password: state.passwordValue,
@@ -140,7 +140,7 @@ function Login() {
 			const source = Axios.CancelToken.source();
 			async function GetUserInfo(){
 			try{
-				const response = await Axios.get("http://localhost:8000/api-auth-djoser/users/me/",
+				const response = await Axios.get("https://www.seattlerental.rent/api-auth-djoser/users/me/",
 					{
 						headers:{Authorization:'Token '.concat(state.token)}
 						

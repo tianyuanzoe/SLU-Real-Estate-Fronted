@@ -175,7 +175,7 @@ function Register() {
             const source = Axios.CancelToken.source();
             async function SignUp() {
                 try {
-                    const response = await Axios.post("http://localhost:8000/api-auth-djoser/users/", {
+                    const response = await Axios.post("https://www.seattlerental.rent/api-auth-djoser/users/", {
                         username: state.usernameValue,
                         email: state.emailValue,
                         password: state.passwordValue,

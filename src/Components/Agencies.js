@@ -62,7 +62,7 @@ function Agencies() {
 		async function GetAgencies() {
 			try {
 				const response = await Axios.get(
-					`http://localhost:8000/api/profiles/`
+					`https://www.seattlerental.rent/api/profiles/`
 				);
 
 				dispatch({

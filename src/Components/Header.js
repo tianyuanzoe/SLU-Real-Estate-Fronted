@@ -87,7 +87,7 @@ function Header() {
     const confirmLogout = window.confirm('Are you sure you want to leave?')
     if(confirmLogout){
       try{
-        const response = await Axios.post("http://localhost:8000/api-auth-djoser/token/logout/",
+        const response = await Axios.post("https://www.seattlerental.rent/api-auth-djoser/token/logout/",
         GlobalState.userToken,
         {headers:{Authorization:'Token '.concat(GlobalState.userToken)}});
         console.log(response);

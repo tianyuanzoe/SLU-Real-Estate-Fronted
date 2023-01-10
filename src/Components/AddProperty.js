@@ -515,7 +515,7 @@ function AddProperty() {
     useEffect(() => {
         async function GetProfileInfo() {
             try {
-                const response = await Axios.get(`http://localhost:8000/api/profiles/${
+                const response = await Axios.get(`https://www.seattlerental.rent/api/profiles/${
                     GlobalState.userId
                 }/`);
                 console.log(response.data)
@@ -597,7 +597,7 @@ function AddProperty() {
                 formData.append('picture5', state.picture5Value);
                 formData.append('seller', GlobalState.userId);
                 try {
-                    const response = await Axios.post("http://localhost:8000/api/listings/create/", formData);
+                    const response = await Axios.post("https://www.seattlerental.rent/api/listings/create/", formData);
                     console.log(response.data)
                     dispatch({type: 'openTheSnack'})
                 } catch (e) {

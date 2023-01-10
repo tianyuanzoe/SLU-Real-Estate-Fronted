@@ -106,7 +106,7 @@ function Profile() {
     useEffect(() => {
         async function GetProfileInfo() {
             try {
-                const response = await Axios.get(`http://localhost:8000/api/profiles/
+                const response = await Axios.get(`https://www.seattlerental.rent/api/profiles/
 				${
                     GlobalState.userId
                 }/`);
