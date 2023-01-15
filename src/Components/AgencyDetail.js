@@ -173,9 +173,12 @@ function AgencyDetail() {
 									// 		? `https://www.lbrepcourseapi.com${listing.picture1}`
 									// 		: defaultProfilePicture
 									// }
-									image={
-										`https://www.seattlerental.rent${listing.picture1}` ? `https://www.seattlerental.rent${listing.picture1}` : defaultProfilePicture
-									}
+									//image={
+									//	`https://www.seattlerental.rent${listing.picture1}` ? `https://www.seattlerental.rent${listing.picture1}` : defaultProfilePicture
+									//}
+									image={ listing.picture1 ? listing.picture1 : defaultProfilePicture }
+
+
 									alt="Listing Picture"
 									onClick={() => navigate(`/listings/${listing.id}`)}
 									style={{ cursor: "pointer" }}
