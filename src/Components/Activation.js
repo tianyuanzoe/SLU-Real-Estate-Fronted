@@ -61,7 +61,9 @@ function Activation() {
 				}
 			);
 			navigate("/login");
-		} catch (e) {}
+		} catch (e) {
+			console.log(e)
+		}
 	}
 
 	return (
