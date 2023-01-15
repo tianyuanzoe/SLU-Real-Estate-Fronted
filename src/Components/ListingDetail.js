@@ -237,7 +237,7 @@ const [open, setOpen] = React.useState(false);
 		async function GetProfileInfo() {
 				try {
 					const response = await Axios.get(
-						`http://localhost:8000/api/profiles/${state.listingInfo.seller}/`
+						`www.seattlerental.rent/api/profiles/${state.listingInfo.seller}/`
 					);
 					console.log(response.data);
 	

@@ -239,7 +239,6 @@ function Listings() {
 		<Typography variant="h5">{listing.title}</Typography>
 		<img src = {listing.picture1} style = {{height:"14rem",width:"18rem",cursor:"pointer"}}
 		onClick = {()=>navigate(`/listings/${listing.id}`)}
-		
 		/>
 		<Typography variant="body1">{listing.description.substring(0,150)}...</Typography>
 		<Button variant = "contained" fullWidth
