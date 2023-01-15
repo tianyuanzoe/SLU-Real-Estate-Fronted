@@ -410,6 +410,7 @@ const [open, setOpen] = React.useState(false);
 						}
 						onClick = {()=>navigate(`/agencies/${state.sellerProfileInfo.seller}`)}
 					/>
+					
 				</Grid>
 				<Grid item container direction="column" justifyContent="center" xs={6}>
 					<Grid item>

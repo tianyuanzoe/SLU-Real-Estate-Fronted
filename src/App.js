@@ -13,6 +13,9 @@ import Profile from './Components/Profile';
 import Agencies from './Components/Agencies';
 import AgencyDetail from './Components/AgencyDetail';
 import ListingDetail from './Components/ListingDetail';
+import AccountCreated from "./Components/AccountCreated";
+import Activation from "./Components/Activation";
+
 // MUI COMPONENTS
 import { StyledEngineProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -73,6 +76,7 @@ function App() {
  <Routes>
   <Route  path = "/" element = { <Home></Home>}/>
   <Route path = '/login' element = {<Login></Login>}/>
+  <Route path="/created" element={<AccountCreated />} />
   <Route path = '/listings' element = {<Listing></Listing>}/>
   <Route path = '/testing' element = {<Testing></Testing>}/>
   <Route path = '/register' element = {<Register></Register>}/>
@@ -81,6 +85,7 @@ function App() {
   <Route path = '/agencies' element = {<Agencies></Agencies>}/>
   <Route path = '/agencies/:id' element = {<AgencyDetail></AgencyDetail>}/>
   <Route path = '/listings/:id' element = {<ListingDetail></ListingDetail>}/>
+  <Route path="/activate/:uid/:token" element={<Activation />} />
   </Routes>
   
 
