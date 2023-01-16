@@ -599,6 +599,7 @@ function AddProperty() {
                 try {
                     const response = await Axios.post("https://www.seattlerental.rent/api/listings/create/", formData);
                     console.log(response.data)
+                    console.log("ok")
                     dispatch({type: 'openTheSnack'})
                 } catch (e) {
                     console.log(e.response);
@@ -658,10 +659,12 @@ function AddProperty() {
         if (state.openSnack) {
             setTimeout(() => {
                 navigate("/listings");
-            }, 1500)
+            }, 1000)
         }
 
     }, [state.openSnack])
+
+    
 
 
     return (
