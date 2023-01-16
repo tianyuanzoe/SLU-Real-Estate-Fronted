@@ -532,7 +532,7 @@ function AddProperty() {
 
     function FormSubmit(e) {
         e.preventDefault();
-        console.log("the form has been submitted");
+        
         if (!state.titleErrors.hasError && 
             !state.listingtTypeErrors.hasError && 
             !state.propertyStatusErrors.hasError &&
@@ -541,6 +541,7 @@ function AddProperty() {
             !state.areaErrors.hasError && 
             !state.boroughErrors.hasError && 
             state.latitudeValue && state.longitudeValue) {
+            console.log("the form has been submitted");
             dispatch({type: 'changeSendRequest'});
             dispatch({type: 'disableTheButton'});
 
@@ -599,7 +600,6 @@ function AddProperty() {
                 try {
                     const response = await Axios.post("https://www.seattlerental.rent/api/listings/create/", formData);
                     console.log(response.data)
-                    console.log("ok")
                     dispatch({type: 'openTheSnack'})
                 } catch (e) {
                     console.log(e.response);
