@@ -245,6 +245,7 @@ function ListingUpdate(props) {
 						`https://www.seattlerental.rent/api/listings/${props.listingData.id}/update/`,
 						formData
 					);
+					
 					console.log(response.data);
 					
 					dispatch({ type: "openTheSnack" });
@@ -280,6 +281,7 @@ function ListingUpdate(props) {
     }
 
 	return (
+		<>
 		<div className={classes.formContainer}>
 			<form onSubmit={FormSubmit}>
 				<Grid item container justifyContent="center">
@@ -557,6 +559,7 @@ function ListingUpdate(props) {
 				}}
 			/>
 		</div>
+		</>
 	);
 }
 
