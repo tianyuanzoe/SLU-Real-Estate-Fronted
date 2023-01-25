@@ -243,6 +243,7 @@ function ListingUpdate(props) {
 				try {
 					const response = await Axios.patch(
 						`https://www.seattlerental.rent/api/listings/${props.listingData.id}/update/`,
+						
 						formData
 					);
 					
