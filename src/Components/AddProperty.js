@@ -519,6 +519,7 @@ function AddProperty() {
                     GlobalState.userId
                 }/`);
                 console.log(response.data)
+                console.log(" hello from get request")
                 dispatch({type: 'catchUserProfileInfo', profileObject: response.data})
             } catch (e) {
                 console.log(e.response)
