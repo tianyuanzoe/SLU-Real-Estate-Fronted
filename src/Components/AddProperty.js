@@ -519,8 +519,9 @@ function AddProperty() {
                     GlobalState.userId
                 }/`);
                 console.log(response.data)
-                console.log(" hello from get request")
+                
                 dispatch({type: 'catchUserProfileInfo', profileObject: response.data})
+                console.log(" hello from get request")
             } catch (e) {
                 console.log(e.response)
             }
@@ -533,6 +534,7 @@ function AddProperty() {
 
     function FormSubmit(e) {
         e.preventDefault();
+        
         
         if (!state.titleErrors.hasError && 
             !state.listingtTypeErrors.hasError && 
@@ -547,24 +549,31 @@ function AddProperty() {
             dispatch({type: 'disableTheButton'});
 
         } else if (state.titleValue === "") {
+            console.log("title");
             dispatch({type: "emptyTitle"})
             window.scrollTo(0, 0)
         } else if (state.listingTypeValue === "") {
+            console.log("listing");
             dispatch({type: "emptyListingType"})
             window.scrollTo(0, 0)
         } else if (state.propertyStatusValue === "") {
+            console.log("pro");
             dispatch({type: "emptyPropertyStatus"})
             window.scrollTo(0, 0)
         } else if (state.priceValue === "") {
+            console.log("price");
             dispatch({type: "emptyPrice"})
             window.scrollTo(0, 0)
         } else if (state.areaValue === "") {
+            console.log("area");
             dispatch({type: "emptyArea"})
             window.scrollTo(0, 0)
         } else if (state.boroughValue === "") {
+            console.log("borough");
             dispatch({type: "emptyBorough"})
             window.scrollTo(0, 0)
         } else if (state.rentalFrequencyValue === "") {
+            console.log("frequency");
             dispatch({type: "emptyRentalFrequency"})
             window.scrollTo(0, 0)
         }
