@@ -585,6 +585,7 @@ function AddProperty() {
         if (state.sendRequest) {
             async function AddProperty() {
                 const formData = new FormData()
+                console.log("formData")
                 formData.append('title', state.titleValue);
                 formData.append('description', state.descriptionValue);
                 formData.append('area', state.areaValue);
@@ -608,6 +609,8 @@ function AddProperty() {
                 formData.append('picture5', state.picture5Value);
                 formData.append('seller', GlobalState.userId);
                 try {
+                    console.log("post")
+
                     const response = await Axios.post("https://www.seattlerental.rent/api/listings/create/", formData);
                     console.log(response.data)
                     dispatch({type: 'openTheSnack'})
