@@ -395,6 +395,11 @@ function AddProperty() {
     }
 
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
+    function TheMapComponent() {
+        const map = useMap();
+        dispatch({type: "getMap", mapData: map});
+        return null
+    }
     // use effect to change the map view depending on chosen borough
     useEffect(() => {
         if (state.boroughValue === 'South Lake Union') {
@@ -539,7 +544,6 @@ function AddProperty() {
             !state.listingtTypeErrors.hasError && 
             !state.propertyStatusErrors.hasError &&
              !state.priceErrors.hasError && 
-             !state.rentalFrequencyErrors&&
             !state.areaErrors.hasError && 
             !state.boroughErrors.hasError && 
             state.latitudeValue && state.longitudeValue) {
@@ -667,11 +671,7 @@ function AddProperty() {
         }
     }
 
-    function TheMapComponent() {
-        const map = useMap();
-        dispatch({type: "getMap", mapData: map});
-        return null
-    }
+    
 
     useEffect(() => {
         if (state.openSnack) {
