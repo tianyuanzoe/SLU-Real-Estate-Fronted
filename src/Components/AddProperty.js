@@ -515,7 +515,7 @@ function AddProperty() {
     useEffect(() => {
         async function GetProfileInfo() {
             try {
-                const response = await Axios.get(`https://www.seattlerental.rent/api/profiles/${
+                const response = await Axios.get(`https://seattlerental.rent/api/profiles/${
                     GlobalState.userId
                 }/`);
                 console.log(response.data)
@@ -534,7 +534,7 @@ function AddProperty() {
 
     function FormSubmit(e) {
         e.preventDefault();
-        
+        //
         
         if (!state.titleErrors.hasError && 
             !state.listingtTypeErrors.hasError && 
@@ -577,6 +577,12 @@ function AddProperty() {
             dispatch({type: "emptyRentalFrequency"})
             window.scrollTo(0, 0)
         }
+        else{
+            console.log("test 580")
+            dispatch({type: 'changeSendRequest'});
+            dispatch({type: 'disableTheButton'});
+        }
+       
 
     }
 
@@ -611,7 +617,7 @@ function AddProperty() {
                 try {
                     console.log("post")
 
-                    const response = await Axios.post("https://www.seattlerental.rent/api/listings/create/", formData);
+                    const response = await Axios.post("https:/seattlerental.rent/api/listings/create/", formData);
                     console.log(response.data)
                     dispatch({type: 'openTheSnack'})
                 } catch (e) {
