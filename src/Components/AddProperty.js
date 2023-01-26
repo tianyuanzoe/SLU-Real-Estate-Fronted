@@ -534,7 +534,6 @@ function AddProperty() {
 
     function FormSubmit(e) {
         e.preventDefault();
-        //
         
         if (!state.titleErrors.hasError && 
             !state.listingtTypeErrors.hasError && 
@@ -617,7 +616,7 @@ function AddProperty() {
                 try {
                     console.log("post")
 
-                    const response = await Axios.post("https:/seattlerental.rent/api/listings/create/", formData);
+                    const response = await Axios.post("https://seattlerental.rent/api/listings/create/", formData);
                     console.log(response.data)
                     dispatch({type: 'openTheSnack'})
                 } catch (e) {
