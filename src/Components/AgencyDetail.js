@@ -82,7 +82,7 @@ function AgencyDetail() {
 				});
 				dispatch({ type: "loadingDone" });
 			} catch (e) {
-				console.log(e.response)
+				//console.log(e.response)
 			}
 		}
 		GetProfileInfo();

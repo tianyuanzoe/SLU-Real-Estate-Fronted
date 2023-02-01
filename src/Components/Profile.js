@@ -110,11 +110,11 @@ function Profile() {
 				${
                     GlobalState.userId
                 }/`);
-                console.log(response.data)
+                //console.log(response.data)
                 dispatch({type: 'catchUserProfileInfo', profileObject: response.data});
 				dispatch({type:'loadingDone'})
             } catch (e) {
-                console.log(e.response)
+                //console.log(e.response)
             }
         }
         GetProfileInfo()

@@ -247,12 +247,12 @@ function ListingUpdate(props) {
 						formData
 					);
 					
-					console.log(response.data);
+					//console.log(response.data);
 					
 					dispatch({ type: "openTheSnack" });
 				} catch (e) {
 					dispatch({ type: "allowTheButton" });
-					console.log(e.response)
+					//console.log(e.response)
 				}
 			}
 			UpdateProperty();

@@ -100,7 +100,7 @@ function Login() {
 	const[state,dispatch] = useImmerReducer(ReducerFunction,initialState)
 	function FormSubmit(e){
 		e.preventDefault();
-		console.log("the form has been submitted");
+		//console.log("the form has been submitted");
 		dispatch({type:'changeSendRequest'});
 		dispatch({type:'disableTheButton'})
 	}
@@ -116,13 +116,13 @@ function Login() {
 						
 					},
 					{cancelToken:source.token,});
-					console.log(response);
+					//console.log(response);
 					dispatch({type:"catchToken",tokenValue :response.data.auth_token});
 					GlobalDispatch({type:"catchToken",tokenValue :response.data.auth_token})
 					navigate('/')
 			}
 			catch(error){
-				console.log(error.response)
+				//console.log(error.response)
 				dispatch({type:"allowTheButton"})
 				dispatch({type:"catchServerError"})
 			}
@@ -146,7 +146,7 @@ function Login() {
 						
 					},
 					{cancelToken:source.token,});
-					console.log(response);
+					//console.log(response);
 					GlobalDispatch({type:'userSignsIn',
 					usernameInfo:response.data.username,
 					emailInfo:response.data.email,
@@ -156,7 +156,7 @@ function Login() {
 					
 			}
 			catch(error){
-				console.log(error.response)
+				//console.log(error.response)
 			}
 			
 		}

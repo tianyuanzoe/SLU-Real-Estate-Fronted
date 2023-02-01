@@ -513,7 +513,7 @@ function AddProperty() {
     }, [state.uploadedPictures[4]])
 
     useEffect(() => {
-        console.log(state.latitudeValue, state.longitudeValue);
+        //console.log(state.latitudeValue, state.longitudeValue);
     }, [state.latitudeValue, state.longitudeValue])
 
     // -----------------request to get a profile info-----------//
@@ -523,12 +523,12 @@ function AddProperty() {
                 const response = await Axios.get(`https://seattlerental.rent/api/profiles/${
                     GlobalState.userId
                 }/`);
-                console.log(response.data)
+                //console.log(response.data)
                 
                 dispatch({type: 'catchUserProfileInfo', profileObject: response.data})
-                console.log(" hello from get request")
+                //console.log(" hello from get request")
             } catch (e) {
-                console.log(e.response)
+                //console.log(e.response)
             }
         }
         GetProfileInfo()
@@ -543,45 +543,46 @@ function AddProperty() {
         if (!state.titleErrors.hasError && 
             !state.listingtTypeErrors.hasError && 
             !state.propertyStatusErrors.hasError &&
+        
              !state.priceErrors.hasError && 
             !state.areaErrors.hasError && 
             !state.boroughErrors.hasError && 
             state.latitudeValue && state.longitudeValue) {
-            console.log("the form has been submitted");
+            //console.log("the form has been submitted");
             dispatch({type: 'changeSendRequest'});
             dispatch({type: 'disableTheButton'});
 
         } else if (state.titleValue === "") {
-            console.log("title");
+            //console.log("title");
             dispatch({type: "emptyTitle"})
             window.scrollTo(0, 0)
         } else if (state.listingTypeValue === "") {
-            console.log("listing");
+            //console.log("listing");
             dispatch({type: "emptyListingType"})
             window.scrollTo(0, 0)
         } else if (state.propertyStatusValue === "") {
-            console.log("pro");
+            //console.log("pro");
             dispatch({type: "emptyPropertyStatus"})
             window.scrollTo(0, 0)
         } else if (state.priceValue === "") {
-            console.log("price");
+            //console.log("price");
             dispatch({type: "emptyPrice"})
             window.scrollTo(0, 0)
         } else if (state.areaValue === "") {
-            console.log("area");
+            //console.log("area");
             dispatch({type: "emptyArea"})
             window.scrollTo(0, 0)
         } else if (state.boroughValue === "") {
-            console.log("borough");
+            //console.log("borough");
             dispatch({type: "emptyBorough"})
             window.scrollTo(0, 0)
         } else if (state.rentalFrequencyValue === "") {
-            console.log("frequency");
+            //console.log("frequency");
             dispatch({type: "emptyRentalFrequency"})
             window.scrollTo(0, 0)
         }
         else{
-            console.log("test 580")
+            //console.log("test 580")
             dispatch({type: 'changeSendRequest'});
             dispatch({type: 'disableTheButton'});
         }
@@ -594,7 +595,7 @@ function AddProperty() {
         if (state.sendRequest) {
             async function AddProperty() {
                 const formData = new FormData()
-                console.log("formData")
+                //console.log("formData")
                 formData.append('title', state.titleValue);
                 formData.append('description', state.descriptionValue);
                 formData.append('area', state.areaValue);
@@ -618,13 +619,13 @@ function AddProperty() {
                 formData.append('picture5', state.picture5Value);
                 formData.append('seller', GlobalState.userId);
                 try {
-                    console.log("post")
+                   // console.log("post")
 
                     const response = await Axios.post("https://seattlerental.rent/api/listings/create/", formData);
-                    console.log(response.data)
+                    //console.log(response.data)
                     dispatch({type: 'openTheSnack'})
                 } catch (e) {
-                    console.log(e.response);
+                    //console.log(e.response);
                     dispatch({type: "allowTheButton"})
                 }
             }

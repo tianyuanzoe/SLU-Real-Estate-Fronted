@@ -162,7 +162,7 @@ function Register() {
 
     function FormSubmit(e) {
         e.preventDefault();
-        console.log("the form has been submitted");
+        //console.log("the form has been submitted");
 		if(!state.usernameErrors.hasError && !state.emailErrors.hasError && !state.passwordErrors.hasError
 			&&state.password2HelperText === ""){
 				dispatch({type: 'changeSendRequest'});
@@ -182,10 +182,10 @@ function Register() {
                         re_password: state.password2Value
 
                     }, {cancelToken: source.token});
-                    console.log(response);
+                    //console.log(response);
                     dispatch({type: 'openTheSnack'})
                 } catch (error) {
-                    console.log(error.response)
+                    //console.log(error.response)
                     dispatch({type: "allowTheButton"})
 					if(error.response.data.username){
 						dispatch({type:"usernameExists"})

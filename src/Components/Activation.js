@@ -62,7 +62,7 @@ function Activation() {
 			);
 			navigate("/login");
 		} catch (e) {
-			console.log(e)
+			//console.log(e)
 		}
 	}
 

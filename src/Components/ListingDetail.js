@@ -178,14 +178,14 @@ async function DeleteHandler(){
 	if (confirmDelete){
 		try{
 			const response = await Axios.delete(`https://www.seattlerental.rent/api/listings/${params.id}/delete/`);
-			console.log(response.data);
+			//console.log(response.data);
 			dispatch({type:'openTheSnack'})
 			dispatch({type:'disableTheButton'})
 			
 	
 		}catch(e){
 			dispatch({type:"allowTheButton"})
-			console.log(e.response.data)
+			//console.log(e.response.data)
 		}
 	}
 
@@ -219,14 +219,14 @@ const [open, setOpen] = React.useState(false);
 				const response = await Axios.get(
 					`https://www.seattlerental.rent/api/listings/${params.id}/`
 				);
-				console.log(response.data);
+				//console.log(response.data);
 
 				dispatch({
 					type: "catchListingInfo",
 					listingObject: response.data,
 				});
 			} catch (e) {
-				console.log(e.response)
+				//console.log(e.response)
 			}
 		}
 		GetListingInfo();
@@ -239,7 +239,7 @@ const [open, setOpen] = React.useState(false);
 					const response = await Axios.get(
 						`https://www.seattlerental.rent/api/profiles/${state.listingInfo.seller}/`
 					);
-					console.log(response.data);
+					//console.log(response.data);
 	
 					dispatch({
 						type: "catchSellerProfileInfo",
@@ -247,7 +247,7 @@ const [open, setOpen] = React.useState(false);
 					});
 					dispatch({ type: "loadingDone" });
 				} catch (e) {
-					console.log(e.response)
+					//console.log(e.response)
 				}
 
 			

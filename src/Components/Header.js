@@ -90,14 +90,14 @@ function Header() {
         const response = await Axios.post("https://www.seattlerental.rent/api-auth-djoser/token/logout/",
         GlobalState.userToken,
         {headers:{Authorization:'Token '.concat(GlobalState.userToken)}});
-        console.log(response);
+        //console.log(response);
         GlobalDispatch({type:"logout"});
         setOpenSnack(true);
         navigate('/')
         
     
         }catch(e){
-          console.log(e.response);
+          //console.log(e.response);
         }
     }
   }

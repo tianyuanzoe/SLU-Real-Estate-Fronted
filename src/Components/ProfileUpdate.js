@@ -56,7 +56,7 @@ function ProfileUpdate(props) {
 	const classes = useStyles();
 	const navigate = useNavigate();
 	const GlobalState = useContext(StateContext);
-	console.log(props.userProfile)
+	//console.log(props.userProfile)
 
 	const initialState = {
 		agencyNameValue: props.userProfile.agencyName,
@@ -149,11 +149,11 @@ function ProfileUpdate(props) {
 						`https://www.seattlerental.rent/api/profiles/${GlobalState.userId}/update/`,
 						formData
 					);
-						console.log(response.data);
+						//console.log(response.data);
 					dispatch({ type: "openTheSnack" });
 				} catch (e) {
 					dispatch({ type: "allowTheButton" });
-					console.log(e.response)
+					//console.log(e.response)
 				}
 			}
 			UpdateProfile();
